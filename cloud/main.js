@@ -4,6 +4,7 @@ require("cloud/app.js");
 var mlog = require('cloud/mlog');
 var mutil = require('cloud/mutil');
 var muser = require('cloud/muser');
+var madd=require('cloud/madd');
 
 function handleRequest(req, res, handleRelationFn) {
   var params = req.params;
@@ -15,9 +16,7 @@ function handleRequest(req, res, handleRelationFn) {
   }, mutil.cloudErrorFn(res));
 }
 
-AV.Cloud.define("hello", function (request, response) {
-  response.success("Hello world!");
-});
+
 
 AV.Cloud.define("addFriend", function (req, res) {
   handleRequest(req, res, muser.addFriendForBoth);
@@ -26,3 +25,5 @@ AV.Cloud.define("addFriend", function (req, res) {
 AV.Cloud.define("removeFriend", function (req, res) {
   handleRequest(req, res, muser.removeFriendForBoth);
 });
+
+AV.Cloud.define("tryCreateAddRequest",madd.tryCreateAddRequest);

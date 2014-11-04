@@ -8,12 +8,17 @@ function doErr(err) {
 }
 
 function renderError(res, error) {
+  var _error;
   if (error == null) {
-    error = "Unknown error";
+    _error = "Unknown error";
   }
-  if (typeof error != 'string')
-    error = util.inspect(error);
-  res.render('500', {error: error});
+  if (typeof error != 'string'){
+    _error = util.inspect(error);
+    if(error.stack && !__production){
+      _error+=' stack='+error.stack;
+    }
+  }
+  res.render('500', {error: _error});
 }
 
 function renderErrorFn(res) {
@@ -136,7 +141,7 @@ function encrypt(s) {
 
 function cloudErrorFn(response) {
   return function (error) {
-    response.error("Error " + error.code + " : " + error.message);
+    response.error(error.message);
   };
 }
 

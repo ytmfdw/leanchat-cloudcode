@@ -3,6 +3,9 @@ var express = require('express');
 var app = express();
 var muser = require('cloud/muser');
 var mutil = require('cloud/mutil');
+var _=require('underscore');
+var madd=require('cloud/madd');
+
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
 app.set('view engine', 'ejs');    // 设置 template 引擎
@@ -42,9 +45,47 @@ function renderFriends(req, res) {
   }, mutil.renderErrorFn(res))
 }
 
+function findAvatars() {
+  return mutil.findAll('Avatar');
+}
+
+function setUserAvatar(req, res) {
+  muser.findAllUsers().then(function (users) {
+    findAvatars().then(function (avatars) {
+      var ps = [];
+      _.each(users, function (user) {
+        var len = avatars.length;
+        var pos = Math.floor(len * Math.random());
+        if (user.get('avatar') == null) {
+          user.set('avatar', avatars[pos].get('file'));
+          ps.push(user.save());
+        }
+      });
+      AV.Promise.when(ps).then(function () {
+        res.send('ok');
+      }, mutil.renderErrorFn(res));
+    });
+  }, mutil.renderErrorFn(res));
+}
+
+function handlePromise(p,res){
+  p.then(function(){
+    res.send('ok');
+  },mutil.renderErrorFn(res));
+}
+
+function addRequestTest(req,res){
+  var fromUserId='544f2a25e4b0e9dff2e9b272';
+  var toUserId='53f0d534e4b0c1ae470ca958';
+  var p=madd._tryCreateAddRequest(fromUserId,toUserId);
+  handlePromise(p,res);
+}
 
 app.get('/addFriend', addFriendTest);
 app.get('/removeFriend', removeFriendTest);
 app.get('/user', findUserTest);
 app.get('/:name/friends', renderFriends);
+app.get('/setAvatars', setUserAvatar);
+app.get('/addRequestTest',addRequestTest);
+
 app.listen();

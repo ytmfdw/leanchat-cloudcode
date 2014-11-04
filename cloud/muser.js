@@ -19,6 +19,10 @@ function findUserByName(name) {
   });
 }
 
+function findAllUsers(modifyQueryFn){
+  return mutil.findAll('_User',modifyQueryFn);
+}
+
 function findFriends(name) {
   var p = new AV.Promise();
   findUserByName(name).then(function (user) {
@@ -84,3 +88,5 @@ exports.removeFriend = removeFriend;
 exports.addFriendForBoth = addFriendForBoth;
 exports.removeFriendForBoth = removeFriendForBoth;
 exports.findFriends = findFriends;
+exports.findAllUsers=findAllUsers;
+
