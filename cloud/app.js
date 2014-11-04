@@ -93,13 +93,15 @@ function agreeFail(req,res){
   handlePromise(p,res);
 }
 
-app.get('/addFriend', addFriendTest);
-app.get('/removeFriend', removeFriendTest);
-app.get('/user', findUserTest);
-app.get('/:name/friends', renderFriends);
-app.get('/setAvatars', setUserAvatar);
-app.get('/addRequestTest',addRequestTest);
-app.get('/agreeTest',agreeAddRequestTest);
-app.get('/agreeTestFail',agreeFail);
+if(__production==false){
+  app.get('/addFriend', addFriendTest);
+  app.get('/removeFriend', removeFriendTest);
+  app.get('/user', findUserTest);
+  app.get('/:name/friends', renderFriends);
+  app.get('/setAvatars', setUserAvatar);
+  app.get('/addRequestTest',addRequestTest);
+  app.get('/agreeTest',agreeAddRequestTest);
+  app.get('/agreeTestFail',agreeFail);
+}
 
 app.listen();
