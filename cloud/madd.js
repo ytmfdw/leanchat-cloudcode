@@ -4,6 +4,7 @@
 var mutil=require('cloud/mutil.js');
 var mlog=require('cloud/mlog');
 var assert=require('assert');
+var muser=require('cloud/muser');
 
 var statusWait= 0,statusDone=1;
 var AddRequest=AV.Object.extend('AddRequest');
@@ -65,5 +66,34 @@ function tryCreateAddRequest(req,res){
   },mutil.cloudErrorFn(res));
 }
 
+function _agreeAddRequest(objectId){
+  var p=new AV.Promise();
+  var q=new AV.Query(AddRequest);
+  q.get(objectId).then(function(addRequest){
+    if(addRequest.get('status')==statusDone){
+      p.reject(Error('该请求已经同意过了'));
+      return;
+    }
+    var fromUser=addRequest.get('fromUser');
+    var toUser=addRequest.get('toUser');
+    muser.removeFriendForBoth(fromUser.id,toUser.id).then(function(){
+      addRequest.set('status',statusDone);
+      addRequest.save().then(function(){
+        p.resolve();
+      },mutil.rejectFn(p));
+    },mutil.rejectFn(p));
+  },mutil.rejectFn(p));
+  return p;
+}
+
+function agreeAddRequest(req,res){
+  var id=req.params.objectId;
+  _agreeAddRequest(id).then(function(){
+    res.success();
+  },mutil.cloudErrorFn(res));
+}
+
 exports.tryCreateAddRequest=tryCreateAddRequest;
 exports._tryCreateAddRequest=_tryCreateAddRequest;
+exports.agreeAddRequest=agreeAddRequest;
+exports._agreeAddRequest=_agreeAddRequest;

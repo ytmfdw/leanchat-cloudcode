@@ -16,8 +16,6 @@ function handleRequest(req, res, handleRelationFn) {
   }, mutil.cloudErrorFn(res));
 }
 
-
-
 AV.Cloud.define("addFriend", function (req, res) {
   handleRequest(req, res, muser.addFriendForBoth);
 });
@@ -27,3 +25,5 @@ AV.Cloud.define("removeFriend", function (req, res) {
 });
 
 AV.Cloud.define("tryCreateAddRequest",madd.tryCreateAddRequest);
+
+AV.Cloud.define("agreeAddRequest",madd.agreeAddRequest);

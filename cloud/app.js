@@ -81,11 +81,25 @@ function addRequestTest(req,res){
   handlePromise(p,res);
 }
 
+function agreeAddRequestTest(req,res){
+  var id='5458c60be4b0b14db2a89281';
+  var p=madd._agreeAddRequest(id);
+  handlePromise(p,res);
+}
+
+function agreeFail(req,res){
+  var id='232';
+  var p=madd._agreeAddRequest(id);
+  handlePromise(p,res);
+}
+
 app.get('/addFriend', addFriendTest);
 app.get('/removeFriend', removeFriendTest);
 app.get('/user', findUserTest);
 app.get('/:name/friends', renderFriends);
 app.get('/setAvatars', setUserAvatar);
 app.get('/addRequestTest',addRequestTest);
+app.get('/agreeTest',agreeAddRequestTest);
+app.get('/agreeTestFail',agreeFail);
 
 app.listen();
