@@ -102,6 +102,15 @@ function saveGroupTest(req,res){
   handlePromise(p,res);
 }
 
+function avatarTest(req,res) {
+  muser.findUserById('544f2a25e4b0e9dff2e9b272').then(function(user){
+    user.set('sex',true);
+    user.save().then(function(){
+      res.send('ok');
+    },mutil.renderErrorFn(res));
+  },mutil.renderErrorFn(res));
+}
+
 if(__production==false){
   app.get('/addFriend', addFriendTest);
   app.get('/removeFriend', removeFriendTest);
@@ -112,6 +121,7 @@ if(__production==false){
   app.get('/agreeTest',agreeAddRequestTest);
   app.get('/agreeTestFail',agreeFail);
   app.get('/saveGroupTest',saveGroupTest);
+  app.get('/avatarTest',avatarTest);
 }
 
 app.listen();

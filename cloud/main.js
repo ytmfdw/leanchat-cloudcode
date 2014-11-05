@@ -28,3 +28,4 @@ AV.Cloud.define("removeFriend", function (req, res) {
 AV.Cloud.define("tryCreateAddRequest",madd.tryCreateAddRequest);
 AV.Cloud.define("agreeAddRequest",madd.agreeAddRequest);
 AV.Cloud.define("saveChatGroup",mgroup.saveChatGroup);
+AV.Cloud.beforeSave("_User",muser.beforeSaveUser);
