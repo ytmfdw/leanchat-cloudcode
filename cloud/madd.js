@@ -76,7 +76,7 @@ function _agreeAddRequest(objectId){
     }
     var fromUser=addRequest.get('fromUser');
     var toUser=addRequest.get('toUser');
-    muser.removeFriendForBoth(fromUser.id,toUser.id).then(function(){
+    muser.addFriendForBoth(fromUser.id,toUser.id).then(function(){
       addRequest.set('status',statusDone);
       addRequest.save().then(function(){
         p.resolve();

@@ -5,6 +5,7 @@ var muser = require('cloud/muser');
 var mutil = require('cloud/mutil');
 var _=require('underscore');
 var madd=require('cloud/madd');
+var mgroup=require('cloud/mgroup.js');
 
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
@@ -82,7 +83,7 @@ function addRequestTest(req,res){
 }
 
 function agreeAddRequestTest(req,res){
-  var id='5458c60be4b0b14db2a89281';
+  var id='5458c607e4b0b14db2a89226';
   var p=madd._agreeAddRequest(id);
   handlePromise(p,res);
 }
@@ -90,6 +91,14 @@ function agreeAddRequestTest(req,res){
 function agreeFail(req,res){
   var id='232';
   var p=madd._agreeAddRequest(id);
+  handlePromise(p,res);
+}
+
+function saveGroupTest(req,res){
+  var groupId="5457a226e4b0c79a9a34bef6";
+  var name="test2";
+  var ownerId="5458c554e4b0b14db2a8857a";
+  var p=mgroup._saveChatGroup(groupId,ownerId,name);
   handlePromise(p,res);
 }
 
@@ -102,6 +111,7 @@ if(__production==false){
   app.get('/addRequestTest',addRequestTest);
   app.get('/agreeTest',agreeAddRequestTest);
   app.get('/agreeTestFail',agreeFail);
+  app.get('/saveGroupTest',saveGroupTest);
 }
 
 app.listen();

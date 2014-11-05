@@ -5,6 +5,7 @@ var mlog = require('cloud/mlog');
 var mutil = require('cloud/mutil');
 var muser = require('cloud/muser');
 var madd=require('cloud/madd');
+var mgroup=require('cloud/mgroup.js');
 
 function handleRequest(req, res, handleRelationFn) {
   var params = req.params;
@@ -25,5 +26,5 @@ AV.Cloud.define("removeFriend", function (req, res) {
 });
 
 AV.Cloud.define("tryCreateAddRequest",madd.tryCreateAddRequest);
-
 AV.Cloud.define("agreeAddRequest",madd.agreeAddRequest);
+AV.Cloud.define("saveChatGroup",mgroup.saveChatGroup);
