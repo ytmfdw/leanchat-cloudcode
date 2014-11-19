@@ -54,8 +54,7 @@ function findOne(clzName, modifyQueryFn) {
 }
 
 function findAll(clzName, modifyQueryFn) {
-  var Clz = AV.Object.extend(clzName);
-  var q = new AV.Query(Clz);
+  var q = new AV.Query(clzName);
   var res = [];
   var p = new AV.Promise();
   if (modifyQueryFn) {
@@ -68,7 +67,7 @@ function findAll(clzName, modifyQueryFn) {
         var promises = [];
         for (var i = 0; i < t; i++) {
           var skip = i * 1000;
-          var q = new AV.Query(Clz);
+          var q = new AV.Query(clzName);
           q.ascending('createdAt');
           q.limit(1000);
           if (modifyQueryFn) {

@@ -111,6 +111,11 @@ function avatarTest(req,res) {
   },mutil.renderErrorFn(res));
 }
 
+function agreeAllAdds(req,res){
+  var p=madd.agreeAllAddRequests();
+  handlePromise(p,res);
+}
+
 if(__production==false){
   app.get('/addFriend', addFriendTest);
   app.get('/removeFriend', removeFriendTest);
@@ -122,6 +127,7 @@ if(__production==false){
   app.get('/agreeTestFail',agreeFail);
   app.get('/saveGroupTest',saveGroupTest);
   app.get('/avatarTest',avatarTest);
+  app.get('/agreeAllAdds',agreeAllAdds);
 }
 
 app.listen();

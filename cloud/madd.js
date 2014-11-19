@@ -5,6 +5,7 @@ var mutil=require('cloud/mutil.js');
 var mlog=require('cloud/mlog');
 var assert=require('assert');
 var muser=require('cloud/muser');
+var _=require('underscore');
 
 var statusWait= 0,statusDone=1;
 var AddRequest=AV.Object.extend('AddRequest');
@@ -93,7 +94,24 @@ function agreeAddRequest(req,res){
   },mutil.cloudErrorFn(res));
 }
 
+function agreeAllAddRequests(){
+  var p=new AV.Promise();
+  mutil.findAll('AddRequest',function(q){
+    q.equalTo('status',0);
+  },mutil.rejectFn(p)).then(function(adds){
+    var ps=[];
+    _.each(adds,function(add){
+      ps.push(_agreeAddRequest(add.id));
+    });
+    AV.Promise.when(ps).then(function(){
+      p.resolve();
+    },mutil.rejectFn(p));
+  });
+  return p;
+}
+
 exports.tryCreateAddRequest=tryCreateAddRequest;
 exports._tryCreateAddRequest=_tryCreateAddRequest;
 exports.agreeAddRequest=agreeAddRequest;
 exports._agreeAddRequest=_agreeAddRequest;
+exports.agreeAllAddRequests=agreeAllAddRequests;
