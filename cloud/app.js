@@ -6,6 +6,7 @@ var mutil = require('cloud/mutil');
 var _=require('underscore');
 var madd=require('cloud/madd');
 var mgroup=require('cloud/mgroup.js');
+var msign=require('cloud/msign.js');
 
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
@@ -116,6 +117,16 @@ function agreeAllAdds(req,res){
   handlePromise(p,res);
 }
 
+function signTest(req,res){
+  var result=msign._sign("1",["2","3","4"]);
+  res.send(result);
+}
+
+function groupSignTest(req,res){
+  var result=msign._groupSign("1","4ad934r23bjhcas",["2","3","4"],"join");
+  res.send(result);
+}
+
 if(__production==false){
   app.get('/addFriend', addFriendTest);
   app.get('/removeFriend', removeFriendTest);
@@ -128,6 +139,8 @@ if(__production==false){
   app.get('/saveGroupTest',saveGroupTest);
   app.get('/avatarTest',avatarTest);
   app.get('/agreeAllAdds',agreeAllAdds);
+  app.get('/signTest',signTest);
+  app.get('/groupSignTest',groupSignTest);
 }
 
 app.listen();

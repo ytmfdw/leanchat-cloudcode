@@ -6,6 +6,7 @@ var mutil = require('cloud/mutil');
 var muser = require('cloud/muser');
 var madd=require('cloud/madd');
 var mgroup=require('cloud/mgroup.js');
+var msign=require('cloud/msign.js');
 
 function handleRequest(req, res, handleRelationFn) {
   var params = req.params;
@@ -29,3 +30,5 @@ AV.Cloud.define("tryCreateAddRequest",madd.tryCreateAddRequest);
 AV.Cloud.define("agreeAddRequest",madd.agreeAddRequest);
 AV.Cloud.define("saveChatGroup",mgroup.saveChatGroup);
 AV.Cloud.beforeSave("_User",muser.beforeSaveUser);
+AV.Cloud.define("sign",msign.sign);
+AV.Cloud.define("group_sign", msign.groupSign);
