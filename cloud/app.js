@@ -7,6 +7,7 @@ var _=require('underscore');
 var madd=require('cloud/madd');
 var mgroup=require('cloud/mgroup.js');
 var msign=require('cloud/msign.js');
+var mqiniu=require('cloud/mqiniu');
 
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
@@ -127,6 +128,12 @@ function groupSignTest(req,res){
   res.send(result);
 }
 
+function qiniuTest(req,res) {
+  var token=mqiniu.uptoken('lzw-picture');
+  res.send(token);
+}
+
+
 if(__production==false){
   app.get('/addFriend', addFriendTest);
   app.get('/removeFriend', removeFriendTest);
@@ -141,6 +148,7 @@ if(__production==false){
   app.get('/agreeAllAdds',agreeAllAdds);
   app.get('/signTest',signTest);
   app.get('/groupSignTest',groupSignTest);
+  app.get('/qiniuTest',qiniuTest);
 }
 
 app.listen();

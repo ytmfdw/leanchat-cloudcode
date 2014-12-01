@@ -7,6 +7,7 @@ var muser = require('cloud/muser');
 var madd=require('cloud/madd');
 var mgroup=require('cloud/mgroup.js');
 var msign=require('cloud/msign.js');
+var mqiniu=require('cloud/mqiniu');
 
 function handleRequest(req, res, handleRelationFn) {
   var params = req.params;
@@ -25,6 +26,8 @@ AV.Cloud.define("addFriend", function (req, res) {
 AV.Cloud.define("removeFriend", function (req, res) {
   handleRequest(req, res, muser.removeFriendForBoth);
 });
+
+AV.Cloud.define("qiniuUptoken",mqiniu.qiniuUptoken);
 
 AV.Cloud.define("tryCreateAddRequest",madd.tryCreateAddRequest);
 AV.Cloud.define("agreeAddRequest",madd.agreeAddRequest);
