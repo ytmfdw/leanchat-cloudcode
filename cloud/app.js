@@ -133,6 +133,9 @@ function qiniuTest(req,res) {
   res.send(token);
 }
 
+function getQiniuToken(req,res){
+  res.send({"token":mqiniu.uptoken(mqiniu.bucketName)});
+}
 
 if(__production==false){
   app.get('/addFriend', addFriendTest);
@@ -150,5 +153,8 @@ if(__production==false){
   app.get('/groupSignTest',groupSignTest);
   app.get('/qiniuTest',qiniuTest);
 }
+
+app.get('/qiniuToken',getQiniuToken);
+app.post('/persistNotify',mqiniu.persistentNotify);
 
 app.listen();
