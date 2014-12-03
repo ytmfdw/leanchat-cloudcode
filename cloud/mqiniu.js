@@ -28,7 +28,7 @@ function persistentNotify(req, res) {
 }
 
 function qiniuUptoken(req, res) {
-  res.success(uptoken(bucketName));
+  res.success({"token":uptoken(bucketName)});
 }
 
 exports.uptoken = uptoken;
