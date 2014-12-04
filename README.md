@@ -8,7 +8,11 @@
 
 Cloud code project for ChatDemo. Cloud Code Guide: https://leancloud.cn/docs/cloud_code_guide.html
 
+## 云代码部署
 
+1. fork 本项目
+2. 改掉 global.json，改为你应用的AppID和AppKey
+3. 安装[云代码命令工具](https://leancloud.cn/docs/cloud_code_commandline.html)进行部署或者管理台云代码一栏，填写项目地址，点击部署
 
 服务端接口：
 
