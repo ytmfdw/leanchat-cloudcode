@@ -1,4 +1,6 @@
-## [Leanchat 项目构成](https://github.com/leancloud/leanchat-android/wiki)
+##LeanChat 云代码
+
+[Leanchat 项目构成](https://github.com/leancloud/leanchat-android/wiki)
 
 Cloud code project for ChatDemo. Cloud Code Guide: https://leancloud.cn/docs/cloud_code_guide.html
 
