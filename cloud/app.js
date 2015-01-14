@@ -8,6 +8,7 @@ var madd=require('cloud/madd');
 var mgroup=require('cloud/mgroup.js');
 var msign=require('cloud/msign.js');
 var mqiniu=require('cloud/mqiniu');
+var mchat=require('cloud/mchat');
 
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
@@ -137,6 +138,14 @@ function getQiniuToken(req,res){
   res.send({"token":mqiniu.uptoken(mqiniu.bucketName)});
 }
 
+function pushMessageTest(req,res){
+  var p=mchat.getPushMessage({content:'{"objectId":"JWIffCKGIxgN2X7jPz0pLJFY","content":"dfg","type":0}',
+    fromPeer:'53f0d534e4b0c1ae470ca958'});
+  p.then(function(msg){
+    res.send(msg);
+  });
+}
+
 if(__production==false){
   app.get('/addFriend', addFriendTest);
   app.get('/removeFriend', removeFriendTest);
@@ -152,6 +161,7 @@ if(__production==false){
   app.get('/signTest',signTest);
   app.get('/groupSignTest',groupSignTest);
   app.get('/qiniuTest',qiniuTest);
+  app.get('/pushMessageTest',pushMessageTest);
 }
 
 app.get('/qiniuToken',getQiniuToken);

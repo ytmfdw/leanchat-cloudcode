@@ -20,6 +20,17 @@ function findUserByName(name) {
   });
 }
 
+function findUsernameById(id){
+  var p=new AV.Promise();
+  findUserById(id).then(function(user){
+    p.resolve(user.get('username'));
+  },function(error){
+    console.log(error.message);
+    p.resolve();
+  });
+  return p;
+}
+
 function findAllUsers(modifyQueryFn){
   return mutil.findAll('_User',modifyQueryFn);
 }
@@ -115,6 +126,23 @@ function beforeSaveUser(req,res){
   }
 }
 
+function handleRelationRequest(req, res, handleRelationFn) {
+  var params = req.params;
+  var fromUserId = params.fromUserId;
+  var toUserId = params.toUserId;
+  handleRelationFn(fromUserId, toUserId).then(function () {
+    res.success();
+  }, mutil.cloudErrorFn(res));
+}
+
+function handleRemoveFriend(req,res){
+  handleRelationRequest(req, res, removeFriendForBoth);
+}
+
+function handleAddFriend(req,res){
+  handleRelationRequest(req, res, addFriendForBoth);
+}
+
 exports.findUser = findUser;
 exports.findUserById = findUserById;
 exports.addFriend = addFriend;
@@ -125,4 +153,6 @@ exports.findFriends = findFriends;
 exports.findAllUsers=findAllUsers;
 exports.beforeSaveUser=beforeSaveUser;
 exports.findRandomAvatar=findRandomAvatar;
-
+exports.handleAddFriend=handleAddFriend;
+exports.handleRemoveFriend=handleRemoveFriend;
+exports.findUsernameById=findUsernameById;
