@@ -61,5 +61,5 @@ function receiversOffline(req, res) {
 }
 
 exports.messageReceived = messageReceived;
-exports.receiversOffline = receiversOffline;
+exports.receiversOffline = receiversOffline; // used by main.js
 exports.getPushMessage=getPushMessage;
