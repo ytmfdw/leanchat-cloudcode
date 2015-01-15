@@ -5,8 +5,11 @@ var mutil = require('cloud/mutil');
 var mlog = require('cloud/mlog');
 var Avatar=AV.Object.extend('Avatar');
 
-function findUserById(userId) {
+function findUserById(userId,queryFn) {
   var q = new AV.Query('_User');
+  if(queryFn){
+    queryFn(q);
+  }
   return q.get(userId);
 }
 
@@ -29,6 +32,13 @@ function findUsernameById(id){
     p.resolve();
   });
   return p;
+}
+
+function findUsers(userIds){
+  var q=new AV.Query('_User');
+  q.containedIn('objectId',userIds);
+  q.include('setting');
+  return q.find();
 }
 
 function findAllUsers(modifyQueryFn){
@@ -156,3 +166,4 @@ exports.findRandomAvatar=findRandomAvatar;
 exports.handleAddFriend=handleAddFriend;
 exports.handleRemoveFriend=handleRemoveFriend;
 exports.findUsernameById=findUsernameById;
+exports.findUsers=findUsers;

@@ -139,10 +139,10 @@ function getQiniuToken(req,res){
 }
 
 function pushMessageTest(req,res){
-  var p=mchat.getPushMessage({content:'{"objectId":"JWIffCKGIxgN2X7jPz0pLJFY","content":"dfg","type":0}',
-    fromPeer:'53f0d534e4b0c1ae470ca958'});
-  p.then(function(msg){
-    res.send(msg);
+  var params={content:'{"objectId":"JWIffCKGIxgN2X7jPz0pLJFY","content":"dfg","type":0}',
+    fromPeer:'544f2a25e4b0e9dff2e9b272',offlinePeers:['5416d9b2e4b0f645f29ddbfd']};
+  mchat._receiversOffLine(params).then(function(result){
+    res.send(result);
   });
 }
 
