@@ -10,7 +10,6 @@ var msgTypeLocation=3;
 
 function messageReceived(req, res) {
   //mlog.logObject(req.params,true);
-  //console.log('messageReceived');
   res.success();
 }
 
@@ -92,7 +91,7 @@ function _receiversOffLine(params){
 
 function receiversOffline(req, res) {
   _receiversOffLine(req.params).then(function(result){
-    console.log('result='+result);
+    //console.log('result='+result);
     res.success(result);
   },function(error){
     console.log(error.message);
