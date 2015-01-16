@@ -28,7 +28,14 @@ function haveAddRequest(fromUserId,toUserId){
     }else{
       p.resolve(false);
     }
-  },mutil.rejectFn(p));
+  },function(error){
+    // https://leancloud.cn/docs/error_code.html
+    if(error.code==101){
+      p.resolve(false);
+    }else{
+      p.reject();
+    }
+  });
   return p;
 }
 
