@@ -110,15 +110,25 @@ function countAvatars(){
 function findRandomAvatar(){
   var p=new AV.Promise();
   countAvatars().then(function(count){
-    var i=Math.floor(Math.random()*count);
-    var q=new AV.Query(Avatar);
-    q.skip(i);
-    q.limit(1);
-    q.ascending('createdAt');
-    q.first().then(function(avatar){
-      p.resolve(avatar);
-    },mutil.rejectFn(p));
-  },mutil.rejectFn(p));
+    if(count>0){
+      var i=Math.floor(Math.random()*count);
+      var q=new AV.Query(Avatar);
+      q.skip(i);
+      q.limit(1);
+      q.ascending('createdAt');
+      q.first().then(function(avatar){
+        p.resolve(avatar);
+      },mutil.rejectFn(p));
+    }else{
+      p.resolve(null);
+    }
+  },function(error){
+    if(error.code==101){
+      p.resolve(null);
+    }else{
+      p.reject(error);
+    }
+  });
   return p;
 }
 
@@ -126,9 +136,9 @@ function beforeSaveUser(req,res){
   var user=req.object;
   if(user.get('avatar')==null){
     findRandomAvatar().then(function(avatar){
-      var url=avatar.get('file').url();
-      mlog.log('getFile '+url);
-      user.set('avatar',avatar.get('file'));
+      if(avatar!=null){
+        user.set('avatar',avatar.get('file'));
+      }
       res.success();
     },mutil.cloudErrorFn(res));
   }else{
