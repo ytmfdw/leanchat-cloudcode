@@ -13,14 +13,12 @@ function messageReceived(req, res) {
   res.success();
 }
 
-function getPushMessage(params,user,sound){
+function getPushMessage(params,user){
   var contentStr=params.content;
   var json={
-    badge:"Increment"
+    badge:"Increment",
+    sound:"default"
   };
-  if(sound===true){
-    json.sound="default";
-  }
   var msg=JSON.parse(contentStr);
   var msgDesc=getMsgDesc(msg);
   var name=user.get('username');
@@ -48,50 +46,15 @@ function getMsgDesc(msg){
 
 function _receiversOffLine(params){
   var p=new AV.Promise();
-  if(params.groupId==null){
-    var fromPeerId=params.fromPeer;
-    var toPeerId=params.offlinePeers[0];
-    muser.findUsers([fromPeerId,toPeerId]).then(function(users){
-      if(users.length==2){
-        var fromPeer;
-        var toPeer;
-        if(users[0].id===fromPeerId){
-          fromPeer=users[0];
-          toPeer=users[1];
-        }else {
-          fromPeer = users[1];
-          toPeer = users[0];
-        }
-        var msgPush=true;
-        var sound=true;
-        var setting=toPeer.get('setting');
-        if(setting!==null && setting!==undefined){
-          msgPush=setting.get('msgPush');
-          sound=setting.get('sound');
-        }
-        if(msgPush===false){
-          p.resolve({skip:true});
-        }else{
-          var msg=getPushMessage(params,fromPeer,sound);
-          p.resolve({pushMessage:msg});
-        }
-      }else{
-        console.log('find users length < 2');
-        mutil.rejectFn(p);
-      }
-    }, mutil.rejectFn(p));
-  }else{
-    muser.findUserById(params.fromPeer).then(function(user){
-      var msg=getPushMessage(params,user,false);
-      p.resolve({pushMessage:msg});
-    },mutil.rejectFn(p));
-  }
+  muser.findUserById(params.fromPeer).then(function(user){
+    var msg=getPushMessage(params,user);
+    p.resolve({pushMessage:msg});
+  },mutil.rejectFn(p));
   return p;
 }
 
 function receiversOffline(req, res) {
   _receiversOffLine(req.params).then(function(result){
-    //console.log('result='+result);
     res.success(result);
   },function(error){
     console.log(error.message);
