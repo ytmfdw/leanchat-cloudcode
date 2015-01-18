@@ -16,9 +16,9 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 
 ## 部署服务端
 
-### 修改 appId 和 appKey
-
-clone 项目，或者下载源代码，修改 `config/global.json` 文件中 `applicationId` 和 `applicationKey` 属性。
+1. fork
+2. 管理台在云代码相关位置填写地址
+3. 管理台点击部署
 
 ### 部署
 
