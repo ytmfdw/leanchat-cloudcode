@@ -134,6 +134,7 @@ function encrypt(s) {
 
 function cloudErrorFn(response) {
   return function (error) {
+    console.log('cloudError '+error.message);
     response.error(error.message);
   };
 }
