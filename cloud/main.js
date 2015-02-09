@@ -20,6 +20,7 @@ AV.Cloud.define("saveChatGroup",mgroup.saveChatGroup);
 AV.Cloud.beforeSave("_User",muser.beforeSaveUser);
 AV.Cloud.define("sign",msign.sign);
 AV.Cloud.define("group_sign", msign.groupSign);
+//AV.Cloud.define('convert',muser.convert);
 
-AV.Cloud.define("_messageReceived",mchat.messageReceived);
-AV.Cloud.define("_receiversOffline",mchat.receiversOffline);
+//AV.Cloud.define("_messageReceived",mchat.messageReceived);
+//AV.Cloud.define("_receiversOffline",mchat.receiversOffline);
