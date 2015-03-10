@@ -9,7 +9,7 @@ var mgroup = require('cloud/mgroup.js');
 var msign = require('cloud/msign.js');
 var mqiniu = require('cloud/mqiniu');
 var mchat = require('cloud/mchat');
-var mlog=require('cloud/mlog');
+var mlog = require('cloud/mlog');
 
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
@@ -130,6 +130,18 @@ function groupSignTest(req, res) {
   res.send(result);
 }
 
+function convSignTest(res, res) {
+  //open
+  msign._convSign("selfId", null, null, null);
+  //start
+  msign._convSign("selfId", null, ["t1", "t2"], null);
+  //add
+  msign._convSign("selfId", "convid", ["t1", "t2"], "invite");
+  //kick
+  var result = msign._convSign("selfId", "convid", ["t1", "t2"], "kick");
+  res.send(result);
+}
+
 function qiniuTest(req, res) {
   var token = mqiniu.uptoken('lzw-picture');
   res.send(token);
@@ -168,6 +180,7 @@ if (__production == false) {
   app.get('/agreeAllAdds', agreeAllAdds);
   app.get('/signTest', signTest);
   app.get('/groupSignTest', groupSignTest);
+  app.get('/convSignTest', convSignTest);
   app.get('/qiniuTest', qiniuTest);
   app.get('/pushMessageTest', pushMessageTest);
   app.get('/test', test);
