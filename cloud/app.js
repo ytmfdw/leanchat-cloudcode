@@ -3,12 +3,13 @@ var express = require('express');
 var app = express();
 var muser = require('cloud/muser');
 var mutil = require('cloud/mutil');
-var _=require('underscore');
-var madd=require('cloud/madd');
-var mgroup=require('cloud/mgroup.js');
-var msign=require('cloud/msign.js');
-var mqiniu=require('cloud/mqiniu');
-var mchat=require('cloud/mchat');
+var _ = require('underscore');
+var madd = require('cloud/madd');
+var mgroup = require('cloud/mgroup.js');
+var msign = require('cloud/msign.js');
+var mqiniu = require('cloud/mqiniu');
+var mchat = require('cloud/mchat');
+var mlog = require('cloud/mlog');
 
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
@@ -72,99 +73,121 @@ function setUserAvatar(req, res) {
   }, mutil.renderErrorFn(res));
 }
 
-function handlePromise(p,res){
-  p.then(function(){
+function handlePromise(p, res) {
+  p.then(function () {
     res.send('ok');
-  },mutil.renderErrorFn(res));
+  }, mutil.renderErrorFn(res));
 }
 
-function addRequestTest(req,res){
-  var fromUserId='544f2a25e4b0e9dff2e9b272';
-  var toUserId='53f0d534e4b0c1ae470ca958';
-  var p=madd._tryCreateAddRequest(fromUserId,toUserId);
-  handlePromise(p,res);
+function addRequestTest(req, res) {
+  var fromUserId = '544f2a25e4b0e9dff2e9b272';
+  var toUserId = '53f0d534e4b0c1ae470ca958';
+  var p = madd._tryCreateAddRequest(fromUserId, toUserId);
+  handlePromise(p, res);
 }
 
-function agreeAddRequestTest(req,res){
-  var id='5458c607e4b0b14db2a89226';
-  var p=madd._agreeAddRequest(id);
-  handlePromise(p,res);
+function agreeAddRequestTest(req, res) {
+  var id = '5458c607e4b0b14db2a89226';
+  var p = madd._agreeAddRequest(id);
+  handlePromise(p, res);
 }
 
-function agreeFail(req,res){
-  var id='232';
-  var p=madd._agreeAddRequest(id);
-  handlePromise(p,res);
+function agreeFail(req, res) {
+  var id = '232';
+  var p = madd._agreeAddRequest(id);
+  handlePromise(p, res);
 }
 
-function saveGroupTest(req,res){
-  var groupId="5457a226e4b0c79a9a34bef6";
-  var name="test2";
-  var ownerId="5458c554e4b0b14db2a8857a";
-  var p=mgroup._saveChatGroup(groupId,ownerId,name);
-  handlePromise(p,res);
+function saveGroupTest(req, res) {
+  var groupId = "5457a226e4b0c79a9a34bef6";
+  var name = "test2";
+  var ownerId = "5458c554e4b0b14db2a8857a";
+  var p = mgroup._saveChatGroup(groupId, ownerId, name);
+  handlePromise(p, res);
 }
 
-function avatarTest(req,res) {
-  muser.findUserById('544f2a25e4b0e9dff2e9b272').then(function(user){
-    user.set('sex',true);
-    user.save().then(function(){
+function avatarTest(req, res) {
+  muser.findUserById('544f2a25e4b0e9dff2e9b272').then(function (user) {
+    user.set('sex', true);
+    user.save().then(function () {
       res.send('ok');
-    },mutil.renderErrorFn(res));
-  },mutil.renderErrorFn(res));
+    }, mutil.renderErrorFn(res));
+  }, mutil.renderErrorFn(res));
 }
 
-function agreeAllAdds(req,res){
-  var p=madd.agreeAllAddRequests();
-  handlePromise(p,res);
+function agreeAllAdds(req, res) {
+  var p = madd.agreeAllAddRequests();
+  handlePromise(p, res);
 }
 
-function signTest(req,res){
-  var result=msign._sign("1",["2","3","4"]);
+function signTest(req, res) {
+  var result = msign._sign("1", ["2", "3", "4"]);
   res.send(result);
 }
 
-function groupSignTest(req,res){
-  var result=msign._groupSign("1","4ad934r23bjhcas",["2","3","4"],"join");
+function groupSignTest(req, res) {
+  var result = msign._groupSign("1", "4ad934r23bjhcas", ["2", "3", "4"], "join");
   res.send(result);
 }
 
-function qiniuTest(req,res) {
-  var token=mqiniu.uptoken('lzw-picture');
+function convSignTest(res, res) {
+  //open
+  msign._convSign("selfId", null, null, null);
+  //start
+  msign._convSign("selfId", null, ["t1", "t2"], null);
+  //add
+  msign._convSign("selfId", "convid", ["t1", "t2"], "invite");
+  //kick
+  var result = msign._convSign("selfId", "convid", ["t1", "t2"], "kick");
+  res.send(result);
+}
+
+function qiniuTest(req, res) {
+  var token = mqiniu.uptoken('lzw-picture');
   res.send(token);
 }
 
-function getQiniuToken(req,res){
-  res.send({"token":mqiniu.uptoken(mqiniu.bucketName)});
+function getQiniuToken(req, res) {
+  res.send({"token": mqiniu.uptoken(mqiniu.bucketName)});
 }
 
-function pushMessageTest(req,res){
-  var params={content:'{"objectId":"JWIffCKGIxgN2X7jPz0pLJFY","content":"dfg","type":0}',
-    fromPeer:'544f2a25e4b0e9dff2e9b272',offlinePeers:['5416d9b2e4b0f645f29ddbfd']};
-  mchat._receiversOffLine(params).then(function(result){
+function pushMessageTest(req, res) {
+  var params = {content: '{"_lctype":-1,"_lctext":"sdfsdfsdf"}',
+    fromPeer: '544f2a25e4b0e9dff2e9b272', offlinePeers: ['5416d9b2e4b0f645f29ddbfd'],
+    conversationId: 'id'};
+  mchat._receiversOffLine(params).then(function (result) {
     res.send(result);
   });
 }
 
-if(__production==false){
+function test(req, res) {
+  var p = muser.convertRelation();
+  p.then(function () {
+    res.send('ok');
+  });
+}
+
+if (__production == false) {
   app.get('/addFriend', addFriendTest);
   app.get('/removeFriend', removeFriendTest);
   app.get('/user', findUserTest);
   app.get('/:name/friends', renderFriends);
   app.get('/setAvatars', setUserAvatar);
-  app.get('/addRequestTest',addRequestTest);
-  app.get('/agreeTest',agreeAddRequestTest);
-  app.get('/agreeTestFail',agreeFail);
-  app.get('/saveGroupTest',saveGroupTest);
-  app.get('/avatarTest',avatarTest);
-  app.get('/agreeAllAdds',agreeAllAdds);
-  app.get('/signTest',signTest);
-  app.get('/groupSignTest',groupSignTest);
-  app.get('/qiniuTest',qiniuTest);
-  app.get('/pushMessageTest',pushMessageTest);
+  app.get('/addRequestTest', addRequestTest);
+  app.get('/agreeTest', agreeAddRequestTest);
+  app.get('/agreeTestFail', agreeFail);
+  app.get('/saveGroupTest', saveGroupTest);
+  app.get('/avatarTest', avatarTest);
+  app.get('/agreeAllAdds', agreeAllAdds);
+  app.get('/signTest', signTest);
+  app.get('/groupSignTest', groupSignTest);
+  app.get('/convSignTest', convSignTest);
+  app.get('/qiniuTest', qiniuTest);
+  app.get('/pushMessageTest', pushMessageTest);
+  app.get('/test', test);
 }
 
-app.get('/qiniuToken',getQiniuToken);
-app.post('/persistNotify',mqiniu.persistentNotify);
+app.get('/qiniuToken', getQiniuToken);
+app.post('/persistNotify', mqiniu.persistentNotify);
 
 app.listen();

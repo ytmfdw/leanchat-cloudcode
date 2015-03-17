@@ -31,6 +31,12 @@ function log(s,mustLog) {
   }
 }
 
+function dir(o){
+  if(open){
+    console.dir(o);
+  }
+}
+
 
 function printProperties(a,mustLog) {
   for (var p in a) {
@@ -47,3 +53,4 @@ exports.log = log;
 exports.logError = logError;
 exports.printProperties = printProperties;
 exports.logObject=logObject;
+exports.dir=dir;

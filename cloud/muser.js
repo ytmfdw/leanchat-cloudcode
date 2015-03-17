@@ -3,11 +3,12 @@
  */
 var mutil = require('cloud/mutil');
 var mlog = require('cloud/mlog');
-var Avatar=AV.Object.extend('Avatar');
+var _ = require('underscore');
+var Avatar = AV.Object.extend('Avatar');
 
-function findUserById(userId,queryFn) {
+function findUserById(userId, queryFn) {
   var q = new AV.Query('_User');
-  if(queryFn){
+  if (queryFn) {
     queryFn(q);
   }
   return q.get(userId);
@@ -23,26 +24,26 @@ function findUserByName(name) {
   });
 }
 
-function findUsernameById(id){
-  var p=new AV.Promise();
-  findUserById(id).then(function(user){
+function findUsernameById(id) {
+  var p = new AV.Promise();
+  findUserById(id).then(function (user) {
     p.resolve(user.get('username'));
-  },function(error){
+  }, function (error) {
     console.log(error.message);
     p.resolve();
   });
   return p;
 }
 
-function findUsers(userIds){
-  var q=new AV.Query('_User');
-  q.containedIn('objectId',userIds);
+function findUsers(userIds) {
+  var q = new AV.Query('_User');
+  q.containedIn('objectId', userIds);
   q.include('setting');
   return q.find();
 }
 
-function findAllUsers(modifyQueryFn){
-  return mutil.findAll('_User',modifyQueryFn);
+function findAllUsers(modifyQueryFn) {
+  return mutil.findAll('_User', modifyQueryFn);
 }
 
 function findFriends(name) {
@@ -102,46 +103,46 @@ function removeFriendForBoth(fromUserId, toUserId) {
   return doRelationForBoth(fromUserId, toUserId, removeFriend);
 }
 
-function countAvatars(){
-  var q=new AV.Query(Avatar);
+function countAvatars() {
+  var q = new AV.Query(Avatar);
   return q.count();
 }
 
-function findRandomAvatar(){
-  var p=new AV.Promise();
-  countAvatars().then(function(count){
-    if(count>0){
-      var i=Math.floor(Math.random()*count);
-      var q=new AV.Query(Avatar);
+function findRandomAvatar() {
+  var p = new AV.Promise();
+  countAvatars().then(function (count) {
+    if (count > 0) {
+      var i = Math.floor(Math.random() * count);
+      var q = new AV.Query(Avatar);
       q.skip(i);
       q.limit(1);
       q.ascending('createdAt');
-      q.first().then(function(avatar){
+      q.first().then(function (avatar) {
         p.resolve(avatar);
-      },mutil.rejectFn(p));
-    }else{
+      }, mutil.rejectFn(p));
+    } else {
       p.resolve(null);
     }
-  },function(error){
-    if(error.code==101){
+  }, function (error) {
+    if (error.code == 101) {
       p.resolve(null);
-    }else{
+    } else {
       p.reject(error);
     }
   });
   return p;
 }
 
-function beforeSaveUser(req,res){
-  var user=req.object;
-  if(user.get('avatar')==null){
-    findRandomAvatar().then(function(avatar){
-      if(avatar!=null){
-        user.set('avatar',avatar.get('file'));
+function beforeSaveUser(req, res) {
+  var user = req.object;
+  if (user.get('avatar') == null) {
+    findRandomAvatar().then(function (avatar) {
+      if (avatar != null) {
+        user.set('avatar', avatar.get('file'));
       }
       res.success();
-    },mutil.cloudErrorFn(res));
-  }else{
+    }, mutil.cloudErrorFn(res));
+  } else {
     res.success();
   }
 }
@@ -155,12 +156,44 @@ function handleRelationRequest(req, res, handleRelationFn) {
   }, mutil.cloudErrorFn(res));
 }
 
-function handleRemoveFriend(req,res){
+function handleRemoveFriend(req, res) {
   handleRelationRequest(req, res, removeFriendForBoth);
 }
 
-function handleAddFriend(req,res){
+function handleAddFriend(req, res) {
   handleRelationRequest(req, res, addFriendForBoth);
+}
+
+function convertRelation() {
+  var p = new AV.Promise();
+  mutil.findAll('_User', function (q) {
+    q.include('friends');
+  }).then(function (users) {
+    var outPs = [];
+    _.each(users, function (user) {
+      var outP = user.relation('friends').query().find().then(function (friends) {
+        var inPs = [];
+        _.each(friends, function (friend) {
+          inPs.push(user.follow(friend.id));
+        });
+        return AV.Promise.when(inPs);
+      });
+      outPs.push(outP);
+    });
+    AV.Promise.when(outPs).then(function(){
+      p.resolve();
+    },function(error){
+      p.resolve();
+    })
+  });
+  return p;
+}
+
+function convert(req,res){
+  var p=convertRelation();
+  p.then(function(){
+    res.success();
+  })
 }
 
 exports.findUser = findUser;
@@ -170,10 +203,12 @@ exports.removeFriend = removeFriend;
 exports.addFriendForBoth = addFriendForBoth;
 exports.removeFriendForBoth = removeFriendForBoth;
 exports.findFriends = findFriends;
-exports.findAllUsers=findAllUsers;
-exports.beforeSaveUser=beforeSaveUser;
-exports.findRandomAvatar=findRandomAvatar;
-exports.handleAddFriend=handleAddFriend;
-exports.handleRemoveFriend=handleRemoveFriend;
-exports.findUsernameById=findUsernameById;
-exports.findUsers=findUsers;
+exports.findAllUsers = findAllUsers;
+exports.beforeSaveUser = beforeSaveUser;
+exports.findRandomAvatar = findRandomAvatar;
+exports.handleAddFriend = handleAddFriend;
+exports.handleRemoveFriend = handleRemoveFriend;
+exports.findUsernameById = findUsernameById;
+exports.findUsers = findUsers;
+exports.convertRelation = convertRelation;
+exports.convert=convert;
