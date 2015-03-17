@@ -152,8 +152,9 @@ function getQiniuToken(req, res) {
 }
 
 function pushMessageTest(req, res) {
-  var params = {content: '{"objectId":"JWIffCKGIxgN2X7jPz0pLJFY","content":"dfg","type":0}',
-    fromPeer: '544f2a25e4b0e9dff2e9b272', offlinePeers: ['5416d9b2e4b0f645f29ddbfd']};
+  var params = {content: '{"_lctype":-1,"_lctext":"sdfsdfsdf"}',
+    fromPeer: '544f2a25e4b0e9dff2e9b272', offlinePeers: ['5416d9b2e4b0f645f29ddbfd'],
+    conversationId: 'id'};
   mchat._receiversOffLine(params).then(function (result) {
     res.send(result);
   });

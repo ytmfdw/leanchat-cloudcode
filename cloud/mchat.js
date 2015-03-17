@@ -1,68 +1,74 @@
 var mlog = require('cloud/mlog');
-var muser=require('cloud/muser');
-var util=require('util');
-var mutil=require('cloud/mutil');
+var muser = require('cloud/muser');
+var util = require('util');
+var mutil = require('cloud/mutil');
 
-var msgTypeText=0;
-var msgTypeImage=1;
-var msgTypeAudio=2;
-var msgTypeLocation=3;
+var msgTypeText = -1;
+var msgTypeImage = -2;
+var msgTypeAudio = -3;
+var msgTypeLocation = -5;
 
 function messageReceived(req, res) {
   //mlog.logObject(req.params,true);
   res.success();
 }
 
-function getPushMessage(params,user){
-  var contentStr=params.content;
-  var json={
-    badge:"Increment",
-    sound:"default"
+function getPushMessage(params, user) {
+  var contentStr = params.content;
+  var json = {
+    badge: "Increment",
+    sound: "default"
   };
-  var msg=JSON.parse(contentStr);
-  var msgDesc=getMsgDesc(msg);
-  var name=user.get('username');
-  json.alert=name+' : '+msgDesc;
+  var msg = JSON.parse(contentStr);
+  var msgDesc = getMsgDesc(msg);
+  var name = user.get('username');
+  json.alert = name + ' : ' + msgDesc;
   return JSON.stringify(json);
 }
 
-function getMsgDesc(msg){
-  if(msg.type==msgTypeText){
-    if(/\\u1f[a-z0-9]{3}/.test(msg.content)){
+function getMsgDesc(msg) {
+  var type = msg._lctype;
+  if (type == msgTypeText) {
+    if (/\\u1f[a-z0-9]{3}/.test(msg._lctext)) {
       return "表情";
-    }else{
-      return msg.content;
+    } else {
+      return msg._lctext;
     }
-  }else if(msg.type==msgTypeImage){
+  } else if (type == msgTypeImage) {
     return "图片";
-  }else if(msg.type==msgTypeAudio){
+  } else if (type == msgTypeAudio) {
     return "声音";
-  }else if(msg.type==msgTypeLocation){
-    return msg.content;
-  }else{
-    return msg.content;
+  } else if (type == msgTypeLocation) {
+    return msg._lctext;
+  } else {
+    return msg;
   }
 }
 
-function _receiversOffLine(params){
-  var p=new AV.Promise();
-  muser.findUserById(params.fromPeer).then(function(user){
-    var msg=getPushMessage(params,user);
-    p.resolve({pushMessage:msg});
-  },mutil.rejectFn(p));
+function _receiversOffLine(params) {
+  var p = new AV.Promise();
+  muser.findUserById(params.fromPeer).then(function (user) {
+    var msg = getPushMessage(params, user);
+    p.resolve({pushMessage: msg});
+  }, mutil.rejectFn(p));
   return p;
 }
 
 function receiversOffline(req, res) {
-  _receiversOffLine(req.params).then(function(result){
-    res.success(result);
-  },function(error){
-    console.log(error.message);
+  if (req.params.conversationId) {
+    // api v2
+    _receiversOffLine(req.params).then(function (result) {
+      res.success(result);
+    }, function (error) {
+      console.log(error.message);
+      res.success();
+    });
+  } else {
     res.success();
-  });
+  }
 }
 
 exports.messageReceived = messageReceived;
 exports.receiversOffline = receiversOffline; // used by main.js
-exports._receiversOffLine=_receiversOffLine;
-exports.getPushMessage=getPushMessage;
+exports._receiversOffLine = _receiversOffLine;
+exports.getPushMessage = getPushMessage;
