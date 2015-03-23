@@ -8,11 +8,10 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 
 ## Leanchat 项目构成
 
-* [Leanchat-android](https://github.com/leancloud/leanchat)：Android 客户端
+* [Leanchat-android](https://github.com/leancloud/leanchat-android)：Android 客户端
 * [Leanchat-ios](https://github.com/leancloud/leanchat-ios)：iOS 客户端
-* [Leanchat-cloud-code](https://github.com/leancloud/leanchat-cloudcode)：服务端，使用 LeanCloud [云代码](https://leancloud.cn/docs/cloud_code_guide.html) 实现
+* [Leanchat-cloud-code](https://github.com/leancloud/leanchat-cloudcode)：可选服务端，使用 LeanCloud [云代码](https://leancloud.cn/docs/cloud_code_guide.html) 实现，实现了聊天的签名，更安全。
 
-如果你从 github clone 速度很慢，可以从 [这里](https://download.leancloud.cn/demo/) 下载项目源码压缩包。
 
 ## 部署服务端
 
@@ -31,10 +30,6 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 
 ### 相关接口
 
-* `addFriend`：双向添加好友，需要参数`fromUserId`,`toUserId`
-* `removeFriend`：双向移除好友，参数同上
-* `tryCreateAddRequest`：尝试发出添加好友的请求，若已存在等待验证的请求，返回 Error ("已经发过请求了")，否则创建一条 `AddRequest` 记录
-* `sign`：对单聊的 watch 进行签名
-* `group_sign`：对群组操作进行签名
+* `conv_sign`：对聊天操作进行签名
 
 代码详见 [main.js](https://github.com/leancloud/AdventureCloud/blob/master/cloud/main.js)
