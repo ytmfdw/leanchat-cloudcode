@@ -19,9 +19,7 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 2. 管理台在云代码相关位置填写地址
 3. 管理台点击部署
 
-### 部署
-
-你可以选择自己喜欢的方式部署服务端程序：
+## 文档
 
 * git 仓库部署：[相关文档](https://leancloud.cn/docs/cloud_code_guide.html#部署代码)
 * 命令行工具部署：[相关文档](https://leancloud.cn/docs/cloud_code_commandline.html#部署)
