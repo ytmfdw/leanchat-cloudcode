@@ -23,5 +23,5 @@ AV.Cloud.define("group_sign", msign.groupSign);
 AV.Cloud.define("conv_sign", msign.convSign);
 //AV.Cloud.define('convert',muser.convert);
 
-//AV.Cloud.define("_messageReceived",mchat.messageReceived);
+AV.Cloud.define("_messageReceived",mchat.messageReceived);
 AV.Cloud.define("_receiversOffline", mchat.receiversOffline);

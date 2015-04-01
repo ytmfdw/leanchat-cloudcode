@@ -64,6 +64,7 @@ function receiversOffline(req, res) {
       res.success();
     });
   } else {
+    console.log("receiversOffline , conversation id is null");
     res.success();
   }
 }
