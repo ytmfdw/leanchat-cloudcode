@@ -55,7 +55,7 @@ function _receiversOffLine(params) {
 }
 
 function receiversOffline(req, res) {
-  if (req.params.conversationId) {
+  if (req.params.convId) {
     // api v2
     _receiversOffLine(req.params).then(function (result) {
       res.success(result);
