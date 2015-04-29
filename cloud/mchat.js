@@ -9,7 +9,6 @@ var msgTypeAudio = -3;
 var msgTypeLocation = -5;
 
 function messageReceived(req, res) {
-  //mlog.logObject(req.params,true);
   res.success();
 }
 
@@ -29,11 +28,7 @@ function getPushMessage(params, user) {
 function getMsgDesc(msg) {
   var type = msg._lctype;
   if (type == msgTypeText) {
-    if (/\\u1f[a-z0-9]{3}/.test(msg._lctext)) {
-      return "表情";
-    } else {
-      return msg._lctext;
-    }
+    return msg._lctext;
   } else if (type == msgTypeImage) {
     return "图片";
   } else if (type == msgTypeAudio) {
@@ -69,7 +64,25 @@ function receiversOffline(req, res) {
   }
 }
 
+function conversationStart(req,res){
+  console.log('conversationStart');
+  res.success();
+}
+
+function conversationRemove(req,res){
+  console.log('conversationRemove');
+  res.success();
+}
+
+function conversationAdd(req,res){
+  console.log('conversationAdd');
+  res.success();
+}
+
 exports.messageReceived = messageReceived;
 exports.receiversOffline = receiversOffline; // used by main.js
 exports._receiversOffLine = _receiversOffLine;
 exports.getPushMessage = getPushMessage;
+exports.conversationStart=conversationStart;
+exports.conversationRemove=conversationRemove;
+exports.conversationAdd=conversationAdd;
