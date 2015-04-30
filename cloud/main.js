@@ -13,4 +13,7 @@ AV.Cloud.define("_conversationRemove",mchat.conversationRemove);
 AV.Cloud.define("_conversationStart",mchat.conversationStart);
 
 AV.Cloud.afterDelete('_Followee',muser.afterDeleteFollowee);
-AV.Cloud.define("test",muser.unfollowTest);
+
+if(!__production){
+  AV.Cloud.define("test",muser.unfollowTest);
+}
