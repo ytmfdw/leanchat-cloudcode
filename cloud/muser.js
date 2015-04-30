@@ -46,25 +46,29 @@ function findAllUsers(modifyQueryFn) {
   return mutil.findAll('_User', modifyQueryFn);
 }
 
-function deleteFollower(user,follower){
-  var q=new AV.Query('_Follower');
-  q.equalTo('user',user);
-  q.equalTo('follower',follower);
-  var p=new AV.Promise();
-  q.find().then(function(followers){
-    AV.Object.destroyAll(followers).then(function(){
-      console.log('succeed delete follower, size = '+followers.length);
-      p.resolve();
-    },mutil.rejectFn(p));
-  },mutil.rejectFn(p));
-  return p;
+function unfollow(user, targetUser) {
+  return user.unfollow(targetUser.id);
 }
 
-function afterDeleteFollowee(req){
-  var user=req.object.get('user');
-  var followee=req.object.get('followee');
-  deleteFollower(followee,user).then(function(){
-  },mlog.logErrorFn);
+function afterDeleteFollowee(req) {
+  var user = req.object.get('user');
+  var followee = req.object.get('followee');
+  if(user.id == req.user.id){
+    /*这里加个判断，否则会执行两次。因为第一个unfollow时，调用了此函数，此函数又调用了unfollow
+ ，第二次引发afterDelete*/
+    unfollow(followee, user).then(function () {
+      console.log('unfollow succeed followee='+followee.id+' user='+user.id);
+    }, mlog.cloudErrorFn);
+  }else{
+    // skip
+  }
+}
+
+function unfollowTest(req, res) {
+  unfollow(AV.Object.createWithoutData('_User', "5416d9b2e4b0f645f29ddbfd"),
+    AV.Object.createWithoutData('_User', "54bc8c2de4b0644caaed25e3")).then(function () {
+      res.success('ok');
+    }, mlog.cloudErrorFn)
 }
 
 exports.findUser = findUser;
@@ -73,4 +77,5 @@ exports.findAllUsers = findAllUsers;
 exports.findUsernameById = findUsernameById;
 exports.findUsers = findUsers;
 exports.afterDeleteFollowee=afterDeleteFollowee;
-exports.deleteFollower=deleteFollower;
+exports.unfollow=unfollow;
+exports.unfollowTest=unfollowTest;

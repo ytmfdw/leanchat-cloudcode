@@ -58,11 +58,6 @@ function pushMessageTest(req, res) {
   });
 }
 
-function deleteFollowerTest(req,res){
-  handlePromise(muser.deleteFollower(AV.Object.createWithoutData('_User',"5416d9b2e4b0f645f29ddbfd"),
-    AV.Object.createWithoutData('_User',"5538b0b1e4b0cafb0a1e97a7")),res);
-}
-
 function test(req, res) {
   res.send('ok');
 }
@@ -71,7 +66,6 @@ if (__production == false) {
   app.get('/setAvatars', setUserAvatar);
   app.get('/convSignTest', convSignTest);
   app.get('/pushMessageTest', pushMessageTest);
-  app.get('/deleteFollowerTest',deleteFollowerTest);
   app.get('/test', test);
 }
 
