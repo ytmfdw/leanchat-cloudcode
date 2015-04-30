@@ -46,8 +46,31 @@ function findAllUsers(modifyQueryFn) {
   return mutil.findAll('_User', modifyQueryFn);
 }
 
+function deleteFollower(user,follower){
+  var q=new AV.Query('_Follower');
+  q.equalTo('user',user);
+  q.equalTo('follower',follower);
+  var p=new AV.Promise();
+  q.find().then(function(followers){
+    AV.Object.destroyAll(followers).then(function(){
+      console.log('succeed delete follower, size = '+followers.length);
+      p.resolve();
+    },mutil.rejectFn(p));
+  },mutil.rejectFn(p));
+  return p;
+}
+
+function afterDeleteFollowee(req){
+  var user=req.object.get('user');
+  var followee=req.object.get('followee');
+  deleteFollower(followee,user).then(function(){
+  },mlog.logErrorFn);
+}
+
 exports.findUser = findUser;
 exports.findUserById = findUserById;
 exports.findAllUsers = findAllUsers;
 exports.findUsernameById = findUsernameById;
 exports.findUsers = findUsers;
+exports.afterDeleteFollowee=afterDeleteFollowee;
+exports.deleteFollower=deleteFollower;
