@@ -4,8 +4,9 @@ var app = express();
 var muser = require('cloud/muser');
 var mutil = require('cloud/mutil');
 var _ = require('underscore');
-var msign = require('cloud/msign.js');
+var msign = require('cloud/msign');
 var mchat = require('cloud/mchat');
+var mlog = require('cloud/mlog');
 
 // App 全局配置
 app.set('views', 'cloud/views');   // 设置模板目录
@@ -37,7 +38,7 @@ function handlePromise(p, res) {
   }, mutil.renderErrorFn(res));
 }
 
-function convSignTest(res, res) {
+function convSignTest(req, res) {
   //open
   msign._convSign("selfId", null, null, null);
   //start
@@ -47,6 +48,24 @@ function convSignTest(res, res) {
   //kick
   var result = msign._convSign("selfId", "convid", ["t1", "t2"], "kick");
   res.send(result);
+}
+
+function convSign(req, res) {
+  var appId = req.query.appId;
+  var masterKey = req.query.masterKey;
+  var selfId = req.query.selfId;
+  var convid = req.query.convid;
+  var targetIds = req.query.targetIds;
+  if (targetIds) {
+    targetIds = targetIds.split(",");
+  }
+  var action =  req.query.action;
+  var result = msign._convSign(selfId, convid, targetIds, action, appId, masterKey);
+  res.render('main',{result:JSON.stringify(result)});
+}
+
+function renderMainPage(req, res) {
+   res.render('main');
 }
 
 function pushMessageTest(req, res) {
@@ -68,5 +87,7 @@ if (__production == false) {
   app.get('/pushMessageTest', pushMessageTest);
   app.get('/test', test);
 }
+
+app.get('/convSign',convSign);
 
 app.listen();
