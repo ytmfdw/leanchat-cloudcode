@@ -6,19 +6,23 @@ var common = require('cloud/common.js');
 APPID = AV.applicationId;
 MASTER_KEY = AV.masterKey;
 
-function _convSign(selfId, convid, targetIds, action, appId, masterKey) {
+function _convSign(selfId, convid, targetIds, action, appId, masterKey, nonce,ts) {
   if (targetIds == null) {
     targetIds = [];
   }
+  targetIds.sort();
   if (!appId) {
     appId = APPID;
   }
   if (!masterKey) {
     masterKey = MASTER_KEY;
   }
-  targetIds.sort();
-  var ts = parseInt(new Date().getTime() / 1000);
-  var nonce = common.getNonce(5);
+  if (!ts){
+    ts = parseInt(new Date().getTime() / 1000);
+  }
+  if (!nonce) {
+    nonce = common.getNonce(5);
+  }
   var content;
   if (convid) {
     content = [appId, selfId, convid, targetIds.join(':'), ts, nonce].join(':');

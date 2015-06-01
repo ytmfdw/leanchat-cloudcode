@@ -60,7 +60,9 @@ function convSign(req, res) {
     targetIds = targetIds.split(",");
   }
   var action =  req.query.action;
-  var result = msign._convSign(selfId, convid, targetIds, action, appId, masterKey);
+  var nonce = req.query.nonce;
+  var timestamp = req.query.timestamp;
+  var result = msign._convSign(selfId, convid, targetIds, action, appId, masterKey, nonce, timestamp);
   res.render('main',{result:JSON.stringify(result)});
 }
 
