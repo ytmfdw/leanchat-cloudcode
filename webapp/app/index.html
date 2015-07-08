@@ -20,15 +20,11 @@
     <label> 密码：</label>
     <input id="input-password" type="text">
 
-    <div id="open-btn" class="btn">连接服务器</div>
+    <div id="open-btn" class="btn">登录</div>
 </div>
 <div class="item">
-    <label>conversationId :</label>
-    <input id="input-convid" type="text"/>
-    <div id="chat-btn" class="btn">开始聊天</div>
-</div>
-<div class="item">
-    <div id="print-wall" class="print-wall"></div>
+    <ul id="conv-list" class="center-block conv-list"></ul>
+    <div id="print-wall" class="center-block print-wall"></div>
 </div>
 <div class="item">
     <label>输入信息：</label>
@@ -36,6 +32,12 @@
 
     <div id="send-btn" class="btn">发送</div>
 </div>
+
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="/bower_components/jquery/dist/jquery.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
 
 <!-- 引入插件，兼容低 IE8+ 等低版本浏览器，注意看下面的注释。如果不需要兼容，可以去掉这部分。 -->
 
@@ -52,7 +54,7 @@
 
 <!-- build:js scripts/av.js -->
 <script src="../bower_components/leancloud-realtime/src/AV.realtime.js"></script>
-<script src="../bower_components/leancloud-javascript-sdk/dist/av-mini.js"></script>
+<script src="../bower_components/leancloud-javascript-sdk/dist/av.js"></script>
 <script src="../bower_components/leancloud-javascript-sdk/dist/localStorage.js"></script>
  <!-- endbuild -->
 

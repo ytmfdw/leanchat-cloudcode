@@ -54,7 +54,8 @@ const lintOptions = {
         'browser'
     ],
     globals: {
-        'AV':true
+        'AV':true,
+        '$': true
     }
 };
 

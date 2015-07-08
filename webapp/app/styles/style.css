@@ -69,18 +69,44 @@ a {
     width: 200px;
 }
 
-.print-wall {
-    overflow: auto;
-    margin: 20px auto;
+.center-block {
     padding: 20px;
     border: 1px solid #888;
-    height: 300px;
-    max-width: 800px;
-    width: 84%;
+    min-height: 400px;
+}
+
+.print-wall {
+    overflow: auto;
+    margin: 20px;
+    width: 70%;
     text-align: left;
+    height: 400px;
 }
 
 .print-wall p {
     margin: 10px 0px;
     word-wrap: break-word;
 }
+
+.conv-list {
+    width: 16% ;
+    margin: 0px 20px;
+    float: left;
+    text-align: right;
+}
+
+.conv-list-selected {
+    background-color: #e2e1e1;
+}
+
+.conv-list li {
+    color: #2C97E8;
+    font-size: 16px;
+    height :25px;
+}
+
+ul
+{
+    list-style-type: none;
+}
+

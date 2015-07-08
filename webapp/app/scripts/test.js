@@ -13,6 +13,8 @@ var rt;
 // 用来存储创建好的 roomObject
 var room;
 
+var cachedUsers = {};
+
 // 监听是否服务器连接成功
 var firstFlag = true;
 
@@ -21,63 +23,19 @@ var logFlag = false;
 
 var openBtn = document.getElementById('open-btn');
 var sendBtn = document.getElementById('send-btn');
-var chatBtn = document.getElementById('chat-btn');
+
 var inputName = document.getElementById('input-name');
 var inputPassword = document.getElementById('input-password');
-var inputConvid = document.getElementById('input-convid');
 var inputSend = document.getElementById('input-send');
+
+var convlist = document.getElementById('conv-list');
 var printWall = document.getElementById('print-wall');
 
 // 拉取历史相关
 // 最早一条消息的时间戳
 var msgTime;
-
-function bindEvent(dom, eventName, fun) {
-    if (window.addEventListener) {
-        dom.addEventListener(eventName, fun);
-    } else {
-        dom.attachEvent('on' + eventName, fun);
-    }
-}
-
-// demo 中输出代码
-function showLog(msg, data, isBefore) {
-    if (data) {
-        // console.log(msg, data);
-        msg = msg + '<span class="strong">' + encodeHTML(JSON.stringify(data)) + '</span>';
-    }
-    var p = document.createElement('p');
-    p.innerHTML = msg;
-    if (isBefore) {
-        printWall.insertBefore(p, printWall.childNodes[0]);
-    } else {
-        printWall.appendChild(p);
-    }
-}
-
-
-function main() {
-    showLog('正在链接服务器，请等待。。。');
-    var username = inputName.value;
-    var password = inputPassword.value;
-    username = 'lzwjava';
-    password = 'lzwjava';
-    if (!username || !password) {
-        showLog('请输入用户名和密码');
-        return;
-    }
-    AV.User.logIn(username, password).then(function (user) {
-        showLog('登录 LeanChat 成功');
-        initRealtime(user.id);
-    }, function (error) {
-        console.dir(error);
-        showLog(error.message);
-    });
-}
-
 bindEvent(openBtn, 'click', main);
 bindEvent(sendBtn, 'click', sendMsg);
-bindEvent(chatBtn, 'click', initRoomAndChat);
 
 bindEvent(document.body, 'keydown', function (e) {
     if (e.keyCode === 13) {
@@ -89,12 +47,137 @@ bindEvent(document.body, 'keydown', function (e) {
     }
 });
 
-function initRoomAndChat() {
-    var roomId = inputConvid.value;
-    if (!roomId) {
-        showLog('请输入 conversationId');
+function main() {
+    showLog('正在链接服务器，请等待。。。');
+    var username = inputName.value;
+    var password = inputPassword.value;
+    if (!username || !password) {
+        showLog('请输入用户名和密码');
         return;
     }
+    login(username, password);
+}
+
+function login(username, password) {
+    AV.User.logIn(username, password).then(function (user) {
+        loginSucceed(user);
+    }, function (error) {
+        console.dir(error);
+        showLog(error.message);
+    });
+}
+
+function loginSucceed(user) {
+    showLog(user.get('username') + ' 登录成功');
+    cachedUsers[user.id] = user;
+    initRealtime(user.id);
+}
+
+function initConvList() {
+    while (convlist.firstChild) {
+        convlist.removeChild(convlist.firstChild);
+    }
+    rt.query({
+        where: {
+            m: rt.cache.options.peerId
+        },
+        sort: '-lm',
+        limit: 15
+    }, function (convs) {
+        console.dir(convs);
+        var userIds = [];
+        var i;
+        for (i = 0; i < convs.length; i++) {
+            var conv = convs[i];
+            if (conv.m.length === 2) {
+                if (userIds.indexOf(getOtherIdOfConv(conv)) === -1) {
+                    userIds.push(getOtherIdOfConv(conv));
+                }
+            }
+        }
+        cacheUsersByIds(userIds).then(function () {
+            var firstLi;
+            for (i = 0; i < convs.length; i++) {
+                var name;
+                if (convs[i].m.length === 2) {
+                    var user = cachedUsers[getOtherIdOfConv(convs[i])];
+                    console.dir(user);
+                    name = user.get('username');
+                } else {
+                    name = convs[i].name;
+                }
+                var p = document.createElement('li');
+                p.id = convs[i].objectId;
+                p.innerHTML = name;
+                bindEvent(p, 'click', clickConv);
+                convlist.appendChild(p);
+                if (i === 0) {
+                    firstLi = p;
+                }
+            }
+            if (firstLi) {
+                firstLi.click();
+            }
+        }, handleError);
+    });
+}
+
+
+function cacheUsersByIds(userIds) {
+    var uncachedIds = [];
+    userIds.forEach(function (userId) {
+        if (!cachedUsers[userId]) {
+            uncachedIds.push(userId);
+        }
+    });
+    var p = new AV.Promise();
+    var query = new AV.Query(AV.User);
+    query.containedIn('objectId', uncachedIds);
+    query.find().then(function (users) {
+        users.forEach(function (user) {
+            cachedUsers[user.id] = user;
+        });
+        p.resolve();
+    }, function (error) {
+        p.reject(error);
+    });
+    return p;
+}
+
+function namesByUserIds(userIds) {
+    var names = [];
+    userIds.forEach(function (userId) {
+        names.push(cachedUsers[userId].get('username'));
+    });
+    return names;
+}
+
+function clickConv(event) {
+    var lis = event.target.parentNode.children;
+    $('li').removeClass('conv-list-selected');
+    var convid = event.target.id;
+    $(event.target).addClass('conv-list-selected');
+    initRoomAndChat(convid);
+}
+
+function getOtherIdOfConv(conv) {
+    if (conv.m[0] === rt.cache.options.peerId) {
+        return conv.m[1];
+    } else {
+        return conv.m[0];
+    }
+}
+
+function initRoomAndChat(roomId) {
+    if (!roomId) {
+        showLog('请选择 room');
+        return;
+    }
+    // remove all elements
+    while (printWall.firstChild) {
+        printWall.removeChild(printWall.firstChild);
+    }
+    msgTime = null;
     rt.room(roomId, function (theRoom) {
         if (theRoom) {
             // 获取成员列表
@@ -104,11 +187,12 @@ function initRoomAndChat() {
                     showLog('此对话成员不包含你，无法加入');
                     return;
                 }
-                showLog('当前 Conversation 的成员列表：', data);
-                // 获取在线的 client（Ping 方法每次只能获取 20 个用户在线信息）
-                rt.ping(data.slice(0, 20), function (list) {
-                    showLog('当前在线的成员列表：', list);
-                });
+                cacheUsersByIds(data).then(function () {
+                    showLog('当前 Conversation 的成员列表：', namesByUserIds(data));
+                    // 获取在线的 client（Ping 方法每次只能获取 20 个用户在线信息）
+                    rt.ping(data.slice(0, 20), function (list) {
+                        showLog('当前在线的成员列表：', namesByUserIds(list));
+                    });
 //                var l = data.length;
 //                // 如果超过 500 人，就踢掉一个。
 //                if (l > 490) {
@@ -116,18 +200,20 @@ function initRoomAndChat() {
 //                        showLog('人数过多，踢掉： ', data[30]);
 //                    });
 //                }
-                // 获取聊天历史
-                getLog(function () {
-                    printWall.scrollTop = printWall.scrollHeight;
-                    showLog('已经加入，可以开始聊天。');
-                });
-                // 房间接受消息
-                room.receive(function (message) {
-                    if (!msgTime) {
-                        // 存储下最早的一个消息时间戳
-                        msgTime = message.timestamp;
-                    }
-                    showMsg(message);
+                    // 获取聊天历史
+                    getLog(function () {
+                        printWall.scrollTop = printWall.scrollHeight;
+                    });
+                    // 房间接受消息
+                    room.receive(function (message) {
+                        if (!msgTime) {
+                            // 存储下最早的一个消息时间戳
+                            msgTime = message.timestamp;
+                        }
+                        cacheUsersByIds([message.fromPeerId]).then(function () {
+                            showMsg(message);
+                        }, handleError);
+                    });
                 });
             });
 
@@ -187,7 +273,7 @@ function initRealtime(clientId) {
     rt.on('open', function () {
         firstFlag = false;
         showLog('服务器连接成功！');
-        showLog('请输入 conversationId 进入房间聊天');
+        initConvList();
     });
 
     // 监听服务情况
@@ -217,6 +303,11 @@ function sendMsg() {
         return;
     }
 
+    if (!room) {
+        showLog('请先选择对话');
+        return;
+    }
+
     // 向这个房间发送消息，这段代码是兼容多终端格式的，包括 iOS、Android、Window Phone
     room.send({
         text: val
@@ -226,7 +317,12 @@ function sendMsg() {
 
         // 发送成功之后的回调
         inputSend.value = '';
-        showLog('（' + formatTime(data.t) + '）  自己： ', val);
+        data.msg = {};
+        data.timestamp = new Date();
+        data.msg.type = 'text';
+        data.msg.text = val;
+        data.fromPeerId = rt.cache.options.peerId;
+        showMsg(data);
         printWall.scrollTop = printWall.scrollHeight;
     });
 
@@ -255,17 +351,17 @@ function sendMsg() {
 // 显示接收到的信息
 function showMsg(data, isBefore) {
     var text = '';
-    var from = data.fromPeerId;
-    if (data.msg.type) {
+    var from = cachedUsers[data.fromPeerId].get('username');
+    if (data.msg.type === 'text') {
         text = data.msg.text;
+    } else if (data.msg.type === 'image') {
+        text = '<a target="_blank" href="' + data.msg.url + '"><img height="300" src="' + data.msg.url + '"></img></a>';
     } else {
-        text = data.msg;
+        text = '<a target="_blank" href="' + data.msg.url + '">' + JSON.stringify(data.msg) + '</a>';
     }
-    if (data.fromPeerId === rt.cache.options.peerId) {
-        from = '自己';
-    }
+    var timeAndFrom = '（' + formatTime(data.timestamp) + '）  ' + encodeHTML(from) + '： ';
     if (String(text).replace(/^\s+/, '').replace(/\s+$/, '')) {
-        showLog('（' + formatTime(data.timestamp) + '）  ' + encodeHTML(from) + '： ', text, isBefore);
+        showLog(timeAndFrom, text, isBefore);
     }
 }
 
@@ -286,26 +382,39 @@ function getLog(callback) {
         logFlag = true;
     }
     room.log({
-        t: msgTime
+        t: msgTime,
+        limit: 20
     }, function (data) {
-        logFlag = false;
         // 存储下最早一条的消息时间戳
         var l = data.length;
-        if (l) {
-            msgTime = data[0].timestamp;
+        console.log('l = ' + l);
+        var clientIds = [];
+        var i;
+        for (i = 0; i < l; i++) {
+            if (clientIds.indexOf(data[i].fromPeerId) === -1) {
+                clientIds.push(data[i].fromPeerId);
+            }
         }
-        for (var i = l - 1; i >= 0; i--) {
-            showMsg(data[i], true);
-        }
-        if (l) {
-            printWall.scrollTop = printWall.scrollHeight - height;
-        }
-        if (callback) {
-            callback();
-        }
+        cacheUsersByIds(clientIds).then(function () {
+            for (i = l - 1; i >= 0; i--) {
+                showMsg(data[i], true);
+            }
+            if (l) {
+                msgTime = data[0].timestamp;
+                printWall.scrollTop = printWall.scrollHeight - height;
+            }
+            if (callback) {
+                callback();
+            }
+            logFlag = false;
+        }, function (error) {
+            showLog(error.message);
+            logFlag = false;
+        });
     });
 }
 
+/*---------- ui ------------*/
 function encodeHTML(source) {
     return String(source)
         .replace(/&/g, '&amp;')
@@ -323,5 +432,38 @@ function formatTime(time) {
     var hh = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
     var mm = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
     var ss = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
-    return date.getFullYear() + '-' + month + '-' + currentDate + ' ' + hh + ':' + mm + ':' + ss;
+    return month + '-' + currentDate + ' ' + hh + ':' + mm + ':' + ss;
+}
+
+function bindEvent(dom, eventName, fun) {
+    if (window.addEventListener) {
+        dom.addEventListener(eventName, fun);
+    } else {
+        dom.attachEvent('on' + eventName, fun);
+    }
+}
+
+function handleError(error) {
+    showLog(error.message);
+}
+
+// demo 中输出代码
+function showLog(msg, data, isBefore) {
+    if (data) {
+        // console.log(msg, data);
+        msg = msg + '<span class="strong">' + data + '</span>';
+    }
+    var p = document.createElement('p');
+    p.innerHTML = msg;
+    if (isBefore) {
+        printWall.insertBefore(p, printWall.childNodes[0]);
+    } else {
+        printWall.appendChild(p);
+    }
+}
+
+if (AV.User.current()) {
+    loginSucceed(AV.User.current());
+} else {
+    showLog('请登录');
 }
