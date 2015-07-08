@@ -220,9 +220,11 @@ function initRoomAndChat(roomId) {
                             // 存储下最早的一个消息时间戳
                             msgTime = message.timestamp;
                         }
-                        cacheUsersByIds([message.fromPeerId]).then(function () {
-                            showMsg(message);
-                        }, handleError);
+                        if (message.cid === room.id) {
+                            cacheUsersByIds([message.fromPeerId]).then(function () {
+                                showMsg(message);
+                            }, handleError);
+                        }
                     });
                 }, function (error) {
                     showLog(error.message);
