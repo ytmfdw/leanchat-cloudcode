@@ -491,7 +491,7 @@ function showLog(msg, data, isBefore) {
 
 if (AV.User.current()) {
     $(loginItem).remove();
-    $('#current-name-label').text(AV.User.current().get('username')+ ' 已登录');
+    $('#current-name-label').text(AV.User.current().get('username') + ' 已登录');
     loginSucceed(AV.User.current());
 } else {
     $(logoutItem).remove();
