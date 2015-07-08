@@ -17,7 +17,7 @@ function getPushMessage(params, user) {
   var json = {
     badge: "Increment",
     sound: "default"
-    //,"_profile": "dev"
+//    ,"_profile": "dev"
   };
   var msg = JSON.parse(contentStr);
   var msgDesc = getMsgDesc(msg);
