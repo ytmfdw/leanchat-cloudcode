@@ -18,8 +18,6 @@ var cachedUsers = {};
 // 监听是否服务器连接成功
 var firstFlag = true;
 
-var firstLoadConvFlag = true;
-
 // 用来标记历史消息获取状态
 var logFlag = false;
 
@@ -27,6 +25,7 @@ var convLoadingFlag = false;
 
 var openBtn = document.getElementById('open-btn');
 var sendBtn = document.getElementById('send-btn');
+var logoutBtn = document.getElementById('logout-btn');
 
 var inputName = document.getElementById('input-name');
 var inputPassword = document.getElementById('input-password');
@@ -35,11 +34,15 @@ var inputSend = document.getElementById('input-send');
 var convlist = document.getElementById('conv-list');
 var printWall = document.getElementById('print-wall');
 
+var loginItem = document.getElementById('login-item');
+var logoutItem = document.getElementById('logout-item');
+
 // 拉取历史相关
 // 最早一条消息的时间戳
 var msgTime;
 bindEvent(openBtn, 'click', main);
 bindEvent(sendBtn, 'click', sendMsg);
+bindEvent(logoutBtn, 'click', logout);
 
 bindEvent(document.body, 'keydown', function (e) {
     if (e.keyCode === 13) {
@@ -62,9 +65,14 @@ function main() {
     login(username, password);
 }
 
+function logout() {
+    AV.User.logOut();
+    location.reload();
+}
+
 function login(username, password) {
     AV.User.logIn(username, password).then(function (user) {
-        loginSucceed(user);
+        location.reload();
     }, function (error) {
         console.dir(error);
         showLog(error.message);
@@ -482,7 +490,9 @@ function showLog(msg, data, isBefore) {
 }
 
 if (AV.User.current()) {
+    $(loginItem).remove();
     loginSucceed(AV.User.current());
 } else {
+    $(logoutItem).remove();
     showLog('请登录');
 }

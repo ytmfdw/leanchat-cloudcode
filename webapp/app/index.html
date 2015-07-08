@@ -14,14 +14,22 @@
 <body>
 <h1> LeanChat </h1>
 
-<div class="item">
-    <label>LeanChat 用户名：</label>
-    <input autofocus id="input-name" type="text">
-    <label> 密码：</label>
-    <input id="input-password" type="text">
+<div>
+    <div id="login-item" class="item">
+        <label>LeanChat 用户名：</label>
+        <input autofocus id="input-name" type="text">
+        <label> 密码：</label>
+        <input id="input-password" type="text">
 
-    <div id="open-btn" class="btn">登录</div>
+        <div id="open-btn" class="btn">登录</div>
+    </div>
+    <div id="logout-item" class="item">
+        <label>已登录</label>
+        <div id="logout-btn" class="btn">注销</div>
+    </div>
+
 </div>
+
 <div class="item">
     <ul id="conv-list" class="center-block conv-list"></ul>
     <div id="print-wall" class="center-block print-wall"></div>

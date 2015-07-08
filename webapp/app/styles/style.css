@@ -110,3 +110,6 @@ ul
     list-style-type: none;
 }
 
+.hidden {
+    visibility: hidden;
+}
