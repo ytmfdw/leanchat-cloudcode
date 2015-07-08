@@ -18,8 +18,12 @@ var cachedUsers = {};
 // 监听是否服务器连接成功
 var firstFlag = true;
 
+var firstLoadConvFlag = true;
+
 // 用来标记历史消息获取状态
 var logFlag = false;
+
+var convLoadingFlag = false;
 
 var openBtn = document.getElementById('open-btn');
 var sendBtn = document.getElementById('send-btn');
@@ -173,6 +177,10 @@ function initRoomAndChat(roomId) {
         showLog('请选择 room');
         return;
     }
+    if (convLoadingFlag) {
+        return;
+    }
+    convLoadingFlag = true;
     // remove all elements
     while (printWall.firstChild) {
         printWall.removeChild(printWall.firstChild);
@@ -185,6 +193,7 @@ function initRoomAndChat(roomId) {
                 room = theRoom;
                 if (data.indexOf(rt.cache.options.peerId) === -1) {
                     showLog('此对话成员不包含你，无法加入');
+                    convLoadingFlag = false;
                     return;
                 }
                 cacheUsersByIds(data).then(function () {
@@ -203,6 +212,7 @@ function initRoomAndChat(roomId) {
                     // 获取聊天历史
                     getLog(function () {
                         printWall.scrollTop = printWall.scrollHeight;
+                        convLoadingFlag = false;
                     });
                     // 房间接受消息
                     room.receive(function (message) {
@@ -214,11 +224,15 @@ function initRoomAndChat(roomId) {
                             showMsg(message);
                         }, handleError);
                     });
+                }, function (error) {
+                    showLog(error.message);
+                    convLoadingFlag = false;
                 });
             });
 
         } else {
             showLog('服务器不存在这个 conversation');
+            convLoadingFlag = false;
 //            showLog('服务器不存在这个 conversation，你需要创建一个。');
 //
 //            // 创建一个新 room
@@ -367,7 +381,10 @@ function showMsg(data, isBefore) {
 
 // 拉取历史
 bindEvent(printWall, 'scroll', function (e) {
-    if (printWall.scrollTop < 20) {
+    if (printWall.scrollTop < 10) {
+        if (convLoadingFlag) {
+            return;
+        }
         getLog();
     }
 });
