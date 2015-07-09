@@ -9,10 +9,10 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 ## 验证签名算法
 签名逻辑可能实现在了您的服务器上，没有用 LeanCloud 的 LeanEngine 功能，可以前往 https://leanchat.avosapps.com/convSign 来校验签名算法是否正确。
 
-## Leanchat 项目构成
+## LeanChat 项目构成
 
-* [Leanchat-android](https://github.com/leancloud/leanchat-android)：Android 客户端
-* [Leanchat-ios](https://github.com/leancloud/leanchat-ios)：iOS 客户端
+* [LeanChat-android](https://github.com/leancloud/leanchat-android)：Android 客户端
+* [LeanChat-ios](https://github.com/leancloud/leanchat-ios)：iOS 客户端
 * [LeanChat-Web](https://github.com/leancloud/leanchat-cloudcode/tree/master/webapp) Web 客户端。在线地址：http://leanchat.avosapps.com/ 
 * [Leanchat-cloud-code](https://github.com/leancloud/leanchat-cloudcode)：可选服务端，使用 LeanCloud [云代码](https://leancloud.cn/docs/cloud_code_guide.html) 实现，实现了聊天的签名，更安全。
 
