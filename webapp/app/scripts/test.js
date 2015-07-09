@@ -231,6 +231,7 @@ function initRoomAndChat(roomId) {
                         if (message.cid === room.id) {
                             cacheUsersByIds([message.fromPeerId]).then(function () {
                                 showMsg(message);
+                                printWall.scrollTop = printWall.scrollHeight;
                             }, handleError);
                         }
                     });
