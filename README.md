@@ -7,7 +7,7 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 应用体验下载地址：[http://fir.im/leanchat](http://fir.im/leanchat)
 
 ## 验证签名算法
-签名逻辑可能实现在了您的服务器上，没有用 LeanCloud 的 LeanEngine 功能，可以前往 https://leanchat.avosapps.com/convSign 来校验签名算法是否正确。
+签名逻辑可能实现在了您的服务器上，没有用 LeanCloud 的 LeanEngine 功能，可以前往 https://leanchat.avosapps.com/convSign 来校验签名算法是否正确。
 
 ## Leanchat 项目构成
 
