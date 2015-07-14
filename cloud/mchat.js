@@ -12,17 +12,21 @@ function messageReceived(req, res) {
   res.success();
 }
 
-function getPushMessage(params, user) {
+function getPushMessage(params) {
   var contentStr = params.content;
   var json = {
     badge: "Increment",
     sound: "default"
-//    ,"_profile": "dev"
+//    ,"_profile": "dev"      //设置证书，开发时用 dev，生产环境不设置
   };
   var msg = JSON.parse(contentStr);
   var msgDesc = getMsgDesc(msg);
-  var name = user.get('username');
-  json.alert = name + ' : ' + msgDesc;
+  var username = getUsername(msg);
+  if (username) {
+      json.alert = username + ' : ' + msgDesc;
+  } else {
+      json.alert = msgDesc;
+  }
   return JSON.stringify(json);
 }
 
@@ -41,24 +45,18 @@ function getMsgDesc(msg) {
   }
 }
 
-function _receiversOffLine(params) {
-  var p = new AV.Promise();
-  muser.findUserById(params.fromPeer).then(function (user) {
-    var msg = getPushMessage(params, user);
-    p.resolve({pushMessage: msg});
-  }, mutil.rejectFn(p));
-  return p;
+function getUsername(msg) {
+    if (msg._lcattrs) {
+       return msg._lcattrs.username;
+    } else {
+        return null;
+    }
 }
 
 function receiversOffline(req, res) {
   if (req.params.convId) {
     // api v2
-    _receiversOffLine(req.params).then(function (result) {
-      res.success(result);
-    }, function (error) {
-      console.log(error.message);
-      res.success();
-    });
+    res.success({pushMessage: getPushMessage(req.params)});
   } else {
     console.log("receiversOffline , conversation id is null");
     res.success();
@@ -82,7 +80,6 @@ function conversationAdd(req,res){
 
 exports.messageReceived = messageReceived;
 exports.receiversOffline = receiversOffline; // used by main.js
-exports._receiversOffLine = _receiversOffLine;
 exports.getPushMessage = getPushMessage;
 exports.conversationStart=conversationStart;
 exports.conversationRemove=conversationRemove;
