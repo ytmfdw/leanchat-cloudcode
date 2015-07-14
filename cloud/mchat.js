@@ -21,11 +21,13 @@ function getPushMessage(params) {
   };
   var msg = JSON.parse(contentStr);
   var msgDesc = getMsgDesc(msg);
-  var username = getUsername(msg);
-  if (username) {
-      json.alert = username + ' : ' + msgDesc;
+  if (msg._lcattrs && msg._lcattrs.username) {
+      json.alert = msg._lcattrs.username + ' : ' + msgDesc;
   } else {
       json.alert = msgDesc;
+  }
+  if (msg._lcattrs && msg._lcattrs.dev) {
+    json._profile = "dev";
   }
   return JSON.stringify(json);
 }
@@ -45,18 +47,16 @@ function getMsgDesc(msg) {
   }
 }
 
-function getUsername(msg) {
-    if (msg._lcattrs) {
-       return msg._lcattrs.username;
-    } else {
-        return null;
-    }
-}
-
 function receiversOffline(req, res) {
   if (req.params.convId) {
     // api v2
-    res.success({pushMessage: getPushMessage(req.params)});
+    try{
+      var pushMessage = getPushMessage(req.params);
+      res.success({pushMessage: pushMessage});
+    } catch(err) {
+      // json parse error
+      res.success();
+    }
   } else {
     console.log("receiversOffline , conversation id is null");
     res.success();

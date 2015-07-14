@@ -71,11 +71,12 @@ function renderMainPage(req, res) {
 }
 
 function pushMessageTest(req, res) {
-  var params = {content: '{"_lctype":-1,"_lctext":"sdfsdfsdf","_lcattrs":{"username":"lzwjava"}}',
+  var params = {content: '{"_lctype":-1,"_lctext":"sdfsdfsdf","_lcattrs":{"username":"lzwjava", "dev":true}}',
     fromPeer: '544f2a25e4b0e9dff2e9b272', offlinePeers: ['5416d9b2e4b0f645f29ddbfd'],
     conversationId: 'id'};
   res.send(mchat.getPushMessage(params));
 }
+
 
 function test(req, res) {
   res.send('ok');
