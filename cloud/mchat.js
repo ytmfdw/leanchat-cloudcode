@@ -6,7 +6,9 @@ var mutil = require('cloud/mutil');
 var msgTypeText = -1;
 var msgTypeImage = -2;
 var msgTypeAudio = -3;
+var msgTypeVideo = -4;
 var msgTypeLocation = -5;
+var msgTypeEmotion = 1;
 
 function messageReceived(req, res) {
   res.success();
@@ -43,8 +45,12 @@ function getMsgDesc(msg) {
     return "声音";
   } else if (type == msgTypeLocation) {
     return msg._lctext;
+  } else if (type == msgTypeEmotion){
+    return "动态表情";
+  } else if (type == msgTypeVideo) {
+    return "视频";
   } else {
-    return msg;
+    return "未知消息";
   }
 }
 
