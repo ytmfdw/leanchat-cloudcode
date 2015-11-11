@@ -90,5 +90,6 @@ if (__production == false) {
 }
 
 app.get('/convSign',convSign);
+app.get('/', convSign);
 
 app.listen();
