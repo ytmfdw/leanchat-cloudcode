@@ -1,10 +1,24 @@
 /**
  * Created by lzw on 14/11/20.
  */
-var common = require('cloud/common.js');
+var AV = require('leanengine');
+var crypto = require('crypto');
 
 APPID = AV.applicationId;
 MASTER_KEY = AV.masterKey;
+
+function sign(text, key) {
+  // Hmac-sha1 hex digest
+  return crypto.createHmac('sha1', key).update(text).digest('hex');
+}
+
+function getNonce(chars){
+  var d = [];
+  for (var i=0; i<chars; i++) {
+    d.push(parseInt(Math.random()*10));
+  }
+  return d.join('');
+}
 
 function _convSign(selfId, convid, targetIds, action, appId, masterKey, nonce,ts) {
   if (targetIds == null) {
@@ -21,7 +35,7 @@ function _convSign(selfId, convid, targetIds, action, appId, masterKey, nonce,ts
     ts = parseInt(new Date().getTime() / 1000);
   }
   if (!nonce) {
-    nonce = common.getNonce(5);
+    nonce = getNonce(5);
   }
   var content;
   if (convid) {
@@ -33,7 +47,7 @@ function _convSign(selfId, convid, targetIds, action, appId, masterKey, nonce,ts
   if (action) {
     content += ':' + action;
   }
-  var sig = common.sign(content, masterKey);
+  var sig = sign(content, masterKey);
   return {"nonce": nonce, "timestamp": ts, "signature": sig};
 }
 

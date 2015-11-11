@@ -1,7 +1,4 @@
-var mlog = require('cloud/mlog');
-var muser = require('cloud/muser');
-var util = require('util');
-var mutil = require('cloud/mutil');
+var mlog = require('./mlog');
 
 var msgTypeText = -1;
 var msgTypeImage = -2;

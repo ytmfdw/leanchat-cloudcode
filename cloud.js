@@ -1,8 +1,9 @@
-require("cloud/app.js");
+var AV = require('leanengine');
 
-var msign = require('cloud/msign');
-var mchat = require('cloud/mchat');
-var muser = require('cloud/muser');
+var msign = require('./custom/msign');
+var mchat = require('./custom/mchat');
+var muser = require('./custom/muser');
+var mutil = require('./custom/mutil');
 
 AV.Cloud.define("conv_sign", msign.convSign);
 
@@ -14,6 +15,8 @@ AV.Cloud.define("_conversationStart",mchat.conversationStart);
 
 AV.Cloud.afterDelete('_Followee',muser.afterDeleteFollowee);
 
-if(!__production){
+if(mutil.isDevelopment()){
   AV.Cloud.define("test",muser.unfollowTest);
 }
+
+module.exports = AV.Cloud;

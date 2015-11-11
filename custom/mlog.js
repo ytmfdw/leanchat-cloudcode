@@ -1,10 +1,13 @@
 /**
  * Created by lzw on 14-8-8.
  */
-
-var open = !__production;
-//var open=true;
 var util = require('util');
+
+function isDevelopment() {
+  return !process.env.LC_APP_ENV || process.env.LC_APP_ENV == 'development';
+}
+
+var open = isDevelopment();
 
 function startWith(s, prefix, f) {
   if (s.indexOf(prefix) == 0) {
@@ -14,7 +17,6 @@ function startWith(s, prefix, f) {
 
 function filterFn(s, f) {
   startWith(s, '', f);
-  //f.call();
 }
 
 function logError(error) {
@@ -31,12 +33,11 @@ function log(s,mustLog) {
   }
 }
 
-function dir(o){
+function dir(o) {
   if(open){
     console.dir(o);
   }
 }
-
 
 function printProperties(a,mustLog) {
   for (var p in a) {
