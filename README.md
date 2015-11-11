@@ -1,11 +1,5 @@
 # LeanChat 服务端
 
-## 简介
-
-LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.cn/docs/realtime.html) 组件的 Demo，通过该应用你可以学习和了解 LeanCloud 实时通信功能。
-
-应用体验下载地址：[http://fir.im/leanchat](http://fir.im/leanchat)
-
 LeanChat 服务端主要有以下功能：
 
 * 实现了自定义推送消息 的 Hook，让推送消息像`老王：约吗？`，体验更好
