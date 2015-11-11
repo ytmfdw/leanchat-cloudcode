@@ -96,7 +96,6 @@ function test(req, res) {
 }
 
 if (mutil.isDevelopment()) {
-  app.get('/setAvatars', setUserAvatar);
   app.get('/convSignTest', convSignTest);
   app.get('/pushMessageTest', pushMessageTest);
   app.get('/test', test);
