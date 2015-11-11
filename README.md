@@ -11,10 +11,10 @@ LeanChat 是 [LeanCloud](http://leancloud.cn) [实时通信](https://leancloud.c
 
 ## LeanChat 项目构成
 
-* [LeanChat-android](https://github.com/leancloud/leanchat-android)：Android 客户端
-* [LeanChat-ios](https://github.com/leancloud/leanchat-ios)：iOS 客户端
-* [LeanChat-Web](https://github.com/leancloud/leanchat-cloudcode/tree/master/webapp) Web 客户端。在线地址：http://leanchat.avosapps.com/ 
-* [Leanchat-cloud-code](https://github.com/leancloud/leanchat-cloudcode)：可选服务端，使用 LeanCloud [云代码](https://leancloud.cn/docs/cloud_code_guide.html) 实现，实现了聊天的签名，更安全。
+* [leanchat-android](https://github.com/leancloud/leanchat-android)，Android 客户端
+* [leanchat-ios](https://github.com/leancloud/leanchat-ios)，iOS 客户端
+* [leanchat-webapp](https://github.com/leancloud/leanchat-webapp)，Web 客户端
+* [leanchat-cloud-code](https://github.com/leancloud/leanchat-cloudcode)，服务端
 
 ## 部署服务端
 
