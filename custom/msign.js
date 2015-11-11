@@ -12,15 +12,15 @@ function sign(text, key) {
   return crypto.createHmac('sha1', key).update(text).digest('hex');
 }
 
-function getNonce(chars){
+function getNonce(chars) {
   var d = [];
-  for (var i=0; i<chars; i++) {
-    d.push(parseInt(Math.random()*10));
+  for (var i = 0; i < chars; i++) {
+    d.push(parseInt(Math.random() * 10));
   }
   return d.join('');
 }
 
-function _convSign(selfId, convid, targetIds, action, appId, masterKey, nonce,ts) {
+function _convSign(selfId, convid, targetIds, action, appId, masterKey, nonce, ts) {
   if (targetIds == null) {
     targetIds = [];
   }
@@ -31,7 +31,7 @@ function _convSign(selfId, convid, targetIds, action, appId, masterKey, nonce,ts
   if (!masterKey) {
     masterKey = MASTER_KEY;
   }
-  if (!ts){
+  if (!ts) {
     ts = parseInt(new Date().getTime() / 1000);
   }
   if (!nonce) {

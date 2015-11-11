@@ -11,10 +11,10 @@ function renderError(res, error) {
   if (error == null) {
     _error = "Unknown error";
   }
-  if (typeof error != 'string'){
+  if (typeof error != 'string') {
     _error = util.inspect(error);
-    if(error.stack && process.env.LC_APP_ENV == 'development'){
-      _error+=' stack='+error.stack;
+    if (error.stack && process.env.LC_APP_ENV == 'development') {
+      _error += ' stack=' + error.stack;
     }
   }
   res.render('500', {error: _error});
@@ -97,7 +97,7 @@ function encrypt(s) {
 
 function cloudErrorFn(response) {
   return function (error) {
-    console.log('cloudError '+error.message);
+    console.log('cloudError ' + error.message);
     response.error(error.message);
   };
 }

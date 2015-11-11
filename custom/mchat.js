@@ -22,9 +22,9 @@ function getPushMessage(params) {
   var msg = JSON.parse(contentStr);
   var msgDesc = getMsgDesc(msg);
   if (msg._lcattrs && msg._lcattrs.username) {
-      json.alert = msg._lcattrs.username + ' : ' + msgDesc;
+    json.alert = msg._lcattrs.username + ' : ' + msgDesc;
   } else {
-      json.alert = msgDesc;
+    json.alert = msgDesc;
   }
   if (msg._lcattrs && msg._lcattrs.dev) {
     json._profile = "dev";
@@ -42,7 +42,7 @@ function getMsgDesc(msg) {
     return "声音";
   } else if (type == msgTypeLocation) {
     return msg._lctext;
-  } else if (type == msgTypeEmotion){
+  } else if (type == msgTypeEmotion) {
     return "动态表情";
   } else if (type == msgTypeVideo) {
     return "视频";
@@ -54,10 +54,10 @@ function getMsgDesc(msg) {
 function receiversOffline(req, res) {
   if (req.params.convId) {
     // api v2
-    try{
+    try {
       var pushMessage = getPushMessage(req.params);
       res.success({pushMessage: pushMessage});
-    } catch(err) {
+    } catch (err) {
       // json parse error
       res.success();
     }
@@ -67,17 +67,17 @@ function receiversOffline(req, res) {
   }
 }
 
-function conversationStart(req,res){
+function conversationStart(req, res) {
   console.log('conversationStart');
   res.success();
 }
 
-function conversationRemove(req,res){
+function conversationRemove(req, res) {
   console.log('conversationRemove');
   res.success();
 }
 
-function conversationAdd(req,res){
+function conversationAdd(req, res) {
   console.log('conversationAdd');
   res.success();
 }
@@ -85,6 +85,6 @@ function conversationAdd(req,res){
 exports.messageReceived = messageReceived;
 exports.receiversOffline = receiversOffline; // used by main.js
 exports.getPushMessage = getPushMessage;
-exports.conversationStart=conversationStart;
-exports.conversationRemove=conversationRemove;
-exports.conversationAdd=conversationAdd;
+exports.conversationStart = conversationStart;
+exports.conversationRemove = conversationRemove;
+exports.conversationAdd = conversationAdd;
