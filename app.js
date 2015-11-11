@@ -49,25 +49,6 @@ app.use(function(req, res, next) {
 });
 
 // custom parts
-function setUserAvatar(req, res) {
-  muser.findAllUsers().then(function (users) {
-    mutil.findAll('Avatar').then(function (avatars) {
-      var ps = [];
-      _.each(users, function (user) {
-        var len = avatars.length;
-        var pos = Math.floor(len * Math.random());
-        if (user.get('avatar') == null) {
-          user.set('avatar', avatars[pos].get('file'));
-          ps.push(user.save());
-        }
-      });
-      AV.Promise.when(ps).then(function () {
-        res.send('ok');
-      }, mutil.renderErrorFn(res));
-    });
-  }, mutil.renderErrorFn(res));
-}
-
 function handlePromise(p, res) {
   p.then(function () {
     res.send('ok');
